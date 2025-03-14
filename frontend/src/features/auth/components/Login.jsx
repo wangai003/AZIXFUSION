@@ -72,7 +72,13 @@ export const Login = () => {
               <Stack flexDirection={'row'} justifyContent={'center'} alignItems={'center'}>
 
                 <Stack rowGap={'.4rem'}>
-                  <Typography variant='h2' sx={{wordBreak:"break-word"}} fontWeight={600}>Mern Shop</Typography>
+                <Box component="a" href="/" sx={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+      <img 
+        src="https://files.catbox.moe/4l70v0.png" 
+        alt="AEM Logo" 
+        style={{ height: "300px", width: "auto" }} 
+      />
+    </Box>
                   <Typography alignSelf={'flex-end'} color={'GrayText'} variant='body2'>- Shop Anything</Typography>
                 </Stack>
 

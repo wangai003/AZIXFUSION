@@ -261,7 +261,7 @@ export const ProductDetails = () => {
                             </Stack>
 
                             {/* price */}
-                            <Typography variant='h5'>${product?.price}</Typography>
+                            <Typography variant='h5'> ₳{product?.price}</Typography>
                         </Stack>
 
                         {/* description */}

@@ -8,12 +8,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectWishlistItems } from '../../wishlist/WishlistSlice';
 import { selectLoggedInUser } from '../../auth/AuthSlice';
 import { addToCartAsync,selectCartItems } from '../../cart/CartSlice';
-import {motion} from 'framer-motion'
+import {motion} from 'framer-motion';
+import { formatPrice } from '../../currency/CurrencySelector';
+import { selectCurrency, selectRates } from '../../currency/currencySlice';
 
-export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handleAddRemoveFromWishlist,isWishlistCard,isAdminCard}) => {
+export const ProductCard = ({id,title,product,price,thumbnail,brand,stockQuantity,handleAddRemoveFromWishlist,isWishlistCard,isAdminCard}) => {
 
 
     const navigate=useNavigate()
+    const selectedCurrency = useSelector(selectCurrency);
+    const rates = useSelector(selectRates);
     const wishlistItems=useSelector(selectWishlistItems)
     const loggedInUser=useSelector(selectLoggedInUser)
     const cartItems=useSelector(selectCartItems)
@@ -71,7 +75,7 @@ export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handle
             </Stack>
 
             <Stack sx={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
-                <Typography>${price}</Typography>
+                <Typography> {formatPrice(price, selectedCurrency, rates)}</Typography>
                 {
                     !isWishlistCard? isProductAlreadyInCart?
                     'Added to cart'

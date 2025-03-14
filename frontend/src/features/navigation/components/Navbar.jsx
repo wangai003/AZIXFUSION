@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Link, useNavigate } from 'react-router-dom';
-import { Badge, Button, Chip, Stack, useMediaQuery, useTheme } from '@mui/material';
+import { Badge, Button, Chip, Stack, useMediaQuery, useTheme, Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUserInfo } from '../../user/UserSlice';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -18,6 +18,7 @@ import { selectWishlistItems } from '../../wishlist/WishlistSlice';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import TuneIcon from '@mui/icons-material/Tune';
 import { selectProductIsFilterOpen, toggleFilters } from '../../products/ProductSlice';
+import CurrencySelector from '../../currency/CurrencySelector';
 
 
 
@@ -57,10 +58,15 @@ export const Navbar=({isProductList=false})=> {
   return (
     <AppBar position="sticky" sx={{backgroundColor:"white",boxShadow:"none",color:"text.primary"}}>
         <Toolbar sx={{p:1,height:"4rem",display:"flex",justifyContent:"space-around"}}>
-
-          <Typography variant="h6" noWrap component="a" href="/" sx={{ mr: 2, display: { xs: 'none', md: 'flex' },fontWeight: 700, letterSpacing: '.3rem', color: 'inherit', textDecoration: 'none', }}>
-            MERN SHOP
-          </Typography>
+        <Box component="a" href="/" sx={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+      <img 
+        src="https://files.catbox.moe/4l70v0.png" 
+        alt="AEM Logo" 
+        style={{ height: "130px", width: "auto" }} 
+      />
+    </Box>
+          
+          
 
 
 
@@ -70,6 +76,7 @@ export const Navbar=({isProductList=false})=> {
                 <Avatar alt={userInfo?.name} src="null" />
               </IconButton>
             </Tooltip>
+            <CurrencySelector />
             <Menu
               sx={{ mt: '45px' }}
               id="menu-appbar"

@@ -17,11 +17,29 @@ const userSchema=new Schema({
     },
     isVerified:{
         type:Boolean,
-        default:false
+        default:true
     },
     isAdmin:{
         type:Boolean,
         default:false
+    },
+    firebaseUid: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    walletAddress: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+    walletSecret: {
+        type: String,
+        select: false
+    },
+    lastLogin: {
+        type: Date,
+        default: Date.now
     }
 })
 

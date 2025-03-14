@@ -34,7 +34,7 @@ export const ProductBanner = ({images}) => {
             {
             Math.abs(activeStep - index) <= 2 
                 ?
-                <Box component="img" sx={{width:'100%',objectFit:"contain"}} src={image} alt={'Banner Image'} />
+                <Box component="img" sx={{width:'100%',/*objectFit:"contain"*/}} src={image} alt={'Banner Image'} />
                 :
                     null
             }

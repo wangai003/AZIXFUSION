@@ -1,38 +1,41 @@
-const mongoose=require("mongoose")
-const {Schema}=mongoose
+const mongoose = require("mongoose");
 
-const orderSchema=new Schema({
-    user:{
-        type:Schema.Types.ObjectId,
-        ref:"User",
-        required:true
+const orderSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     },
-    item:{
-        type:[Schema.Types.Mixed],
-        required:true
+    items: [{
+        product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        },
+        quantity: Number,
+        price: Number
+    }],
+    address: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true
     },
-    address:{
-        type:[Schema.Types.Mixed],
-        required:true
+    paymentMethod: {
+        type: String,
+        enum: ['card', 'crypto', 'mpesa'],
+        required: true
     },
-    status:{
-        type:String,
-        enum:['Pending','Dispatched','Out for delivery','Cancelled'],
-        default:'Pending'
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed', 'failed'],
+        default: 'pending'
     },
-    paymentMode:{
-        type:String,
-        enum:['COD','UPI','CARD'],
-        required:true
+    paymentDetails: {
+        type: mongoose.Schema.Types.Mixed
     },
-    total:{
-        type:Number,
-        required:true
-    },
-    createdAt:{
-        type:Date,
-        default:Date.now
-    },
-},{versionKey:false})
+    total: Number,
+    status: {
+        type: String,
+        default: 'pending'
+    }
+}, { timestamps: true });
 
-module.exports=mongoose.model("Order",orderSchema)
+module.exports = mongoose.model("Order", orderSchema);

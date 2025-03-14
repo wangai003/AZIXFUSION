@@ -12,6 +12,7 @@ const initialState={
     loginStatus:"idle",
     loginError:null,
     loggedInUser:null,
+    user:null,
     otpVerificationStatus:"idle",
     otpVerificationError:null,
     forgotPasswordStatus:"idle",
@@ -144,6 +145,7 @@ const authSlice=createSlice({
             .addCase(loginAsync.fulfilled,(state,action)=>{
                 state.loginStatus='fullfilled'
                 state.loggedInUser=action.payload
+                state.user=action.payload
             })
             .addCase(loginAsync.rejected,(state,action)=>{
                 state.loginStatus='rejected'
@@ -216,6 +218,7 @@ const authSlice=createSlice({
             .addCase(checkAuthAsync.fulfilled,(state,action)=>{
                 state.status='fullfilled'
                 state.loggedInUser=action.payload
+                state.user=action.payload
                 state.isAuthChecked=true
             })
             .addCase(checkAuthAsync.rejected,(state,action)=>{
