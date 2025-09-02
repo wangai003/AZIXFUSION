@@ -77,7 +77,7 @@ export const ProductUpdate = () => {
 
                     <FormControl fullWidth>
                         <InputLabel id="brand-selection">Brand</InputLabel>
-                        <Select defaultValue={selectedProduct.brand._id} {...register("brand",{required:"Brand is required"})} labelId="brand-selection" label="Brand">
+                        <Select defaultValue={selectedProduct.brand?._id || ''} {...register("brand",{required:"Brand is required"})} labelId="brand-selection" label="Brand">
                             
                             {
                                 brands.map((brand)=>(
@@ -91,7 +91,7 @@ export const ProductUpdate = () => {
 
                     <FormControl fullWidth>
                         <InputLabel id="category-selection">Category</InputLabel>
-                        <Select defaultValue={selectedProduct.category._id} {...register("category",{required:"category is required"})} labelId="category-selection" label="Category">
+                        <Select defaultValue={selectedProduct.category?._id || ''} {...register("category",{required:"category is required"})} labelId="category-selection" label="Category">
                             
                             {
                                 categories.map((category)=>(

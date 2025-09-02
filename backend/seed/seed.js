@@ -7,11 +7,11 @@ const {seedWishlist}=require("./Wishlist")
 const {seedCart}=require("./Cart")
 const {seedReview}=require("./Review")
 const {seedOrder}=require("./Order")
-const {connectToDB}=require("../database/db")
+const {connectToDatabase}=require("../database/db")
 
 const seedData=async()=>{
     try {
-        await connectToDB()
+        await connectToDatabase()
         console.log('Seed [started] please wait..');
         await seedBrand()
         await seedCategory()
@@ -24,8 +24,10 @@ const seedData=async()=>{
         await seedOrder()
 
         console.log('Seed completed..');
+        process.exit(0);
     } catch (error) {
-        console.log(error);
+        console.error('Seeding failed:', error.message);
+        process.exit(1);
     }
 }
 

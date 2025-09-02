@@ -117,8 +117,8 @@ export const AdminOrders = () => {
                       {
                         order.item.map((product)=>(
                           <Stack mt={2} flexDirection={'row'} alignItems={'center'} columnGap={2}>
-                            <Avatar src={product.product.thumbnail}></Avatar>
-                            <Typography>{product.product.title}</Typography>
+                            <Avatar src={product.product?.thumbnail || ''}></Avatar>
+                            <Typography>{product.product?.title || 'No Title'}</Typography>
                           </Stack>
                         ))
                       }
@@ -126,10 +126,10 @@ export const AdminOrders = () => {
                     <TableCell align="right">{order.total}</TableCell>
                     <TableCell align="right">
                       <Stack>
-                        <Typography>{order.address[0].street}</Typography>
-                        <Typography>{order.address[0].city}</Typography>
-                        <Typography>{order.address[0].state}</Typography>
-                        <Typography>{order.address[0].postalCode}</Typography>
+                        <Typography>{order.address?.[0]?.street || 'No Street'}</Typography>
+                        <Typography>{order.address?.[0]?.city || 'No City'}</Typography>
+                        <Typography>{order.address?.[0]?.state || 'No State'}</Typography>
+                        <Typography>{order.address?.[0]?.postalCode || 'No Postal Code'}</Typography>
                       </Stack>
                     </TableCell>
                     <TableCell align="right">{order.paymentMode}</TableCell>

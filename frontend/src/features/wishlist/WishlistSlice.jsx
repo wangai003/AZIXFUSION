@@ -29,6 +29,10 @@ export const deleteWishlistItemByIdAsync=createAsyncThunk('wishlist/deleteWishli
     return deletedWishlistItem
 })
 
+// Alias for backward compatibility
+export const fetchWishlistAsync = fetchWishlistByUserIdAsync;
+export const deleteWishlistItemAsync = deleteWishlistItemByIdAsync;
+
 const wishlistSlice=createSlice({
     name:"wishlistSlice",
     initialState:initialState,
@@ -111,6 +115,12 @@ export const selectWishlistItemDeleteStatus=(state)=>state.WishlistSlice.wishlis
 export const selectWishlistErrors=(state)=>state.WishlistSlice.errors
 export const selectWishlistSuccessMessage=(state)=>state.WishlistSlice.successMessage
 export const selectWishlistTotalResults=(state)=>state.WishlistSlice.totalResults
+
+// Additional selectors for backward compatibility
+export const selectWishlistStatus = selectWishlistFetchStatus;
+export const selectWishlistError = selectWishlistErrors;
+export const selectWishlistActionStatus = selectWishlistItemDeleteStatus;
+export const selectWishlistActionError = selectWishlistErrors;
 
 // exporting actions
 export const {resetWishlistFetchStatus,resetWishlistItemAddStatus,resetWishlistItemDeleteStatus,resetWishlistItemUpdateStatus}=wishlistSlice.actions

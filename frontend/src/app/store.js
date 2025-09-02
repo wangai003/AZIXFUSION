@@ -10,6 +10,8 @@ import ReviewSlice from '../features/review/ReviewSlice'
 import OrderSlice from '../features/order/OrderSlice'
 import WishlistSlice from '../features/wishlist/WishlistSlice'
 import currencyReducer from '../features/currency/currencySlice'
+import AdminReducer from '../features/admin/AdminSlice'
+import ServiceSlice from '../features/services/ServiceSlice';
 
 export const store=configureStore({
     reducer:{
@@ -23,6 +25,8 @@ export const store=configureStore({
         ReviewSlice,
         OrderSlice,
         WishlistSlice,
-        currency: currencyReducer, // This should match your slice name
+        AdminSlice: AdminReducer,
+        currency: currencyReducer,
+        ServiceSlice,
     }
 })

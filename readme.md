@@ -1,177 +1,136 @@
-## MERN Ecommerce: A Seamless Shopping Experience Powered by the MERN Stack, Redux Toolkit, and Material UI
+# MERN Marketplace Platform
 
-### ```Note✨: I have another amazing project on``` [end-to-end-encrypted-chat-application](https://github.com/RishiBakshii/mern-chat) ```using mern stack.```
+## Overview
+A full-featured, modern, multi-vendor marketplace platform supporting B2B, B2C, and service-based commerce (like Alibaba + Fiverr). Built with the MERN stack, it supports products, services, service requests, real-time messaging, reviews, analytics, and robust admin moderation.
 
-**MERN Ecommerce** is a full-stack application designed to transform your online shopping experience. Built with the MERN stack (MongoDB, Express.js, React, Node.js), it leverages Redux Toolkit for efficient state management and Material UI for a sleek, user-friendly interface. This project offers a robust platform for both users and admins, packed with essential features for a seamless experience.
+---
 
-![ecommerce-homepage](https://github.com/RishiBakshii/mern-ecommerce/blob/main/frontend/src/assets/images/front.png?raw=true)
-<!-- ![ecommerce-banner](https://github.com/RishiBakshii/mern-ecommerce/blob/main/frontend/src/assets/images/banner4.jpg?raw=true) -->
-![ecommerce-banner](https://github.com/RishiBakshii/mern-ecommerce/blob/main/frontend/src/assets/images/banner3.jpg?raw=true)
+## Features
+- Multi-role: Buyer, Seller, Service Provider, Admin
+- Product & Service Marketplace (physical, digital, gigs)
+- Service Requests (job posts, applications)
+- Real-time Messaging (buyers, sellers, providers)
+- Reviews & Ratings (products, services, users)
+- Advanced Admin Dashboard (analytics, moderation, CRUD)
+- Modern, responsive UI (Material UI, Framer Motion, Chart.js)
+- Role-based access, KYC, and security
+- Category & Brand management
+- Mobile-friendly, error boundaries, and feedback
 
+---
 
-# **Features**
+## Architecture
+- **Frontend:** React, Redux Toolkit, Material UI, Framer Motion, Chart.js
+- **Backend:** Node.js, Express, MongoDB (Mongoose), RESTful API
+- **State Management:** Redux for all major flows
+- **Deployment:** Vercel (frontend/backend), Docker-ready
 
-### **User:**
-- **Product Reviews:**
-  - Write, edit, and delete reviews.
-  - Instant updates on ratings and star percentages.
-  
-- **Wishlist:**
-  - Add, remove, and annotate products with personalized notes.
-  
-- **Order Management:**
-  - Create new orders and view order history.
-  
-- **Profile Management:**
-  - Manage email, username, and multiple addresses.
-  
-- **Shopping Cart:**
-  - Add products, adjust quantities, and view subtotals.
+---
 
-### **Admin:**
-- **Product Management:**
-  - Add, edit, delete, and soft-delete products.
-  - Manage product attributes like name and stock.
-  
-- **Order Management:**
-  - View and update order details and status.
+## User Flows
+### Registration & Authentication
+- Sign up as buyer, seller, provider, or admin
+- Email/password, social login, KYC onboarding
 
-### **Security & User Experience:**
-- **Secure Authentication:**
-  - Login, signup, OTP verification, password reset, and logout.
+### Buyer
+- Browse/search/filter products & services by category/brand
+- Add to cart, checkout, track orders
+- Post/manage service requests (job posts)
+- Manage wishlist, leave reviews, message sellers/providers
 
-- **Intuitive Interface:**
-  - Powered by Material UI for a visually appealing and user-friendly experience.
+### Seller
+- Multi-step onboarding (profile, KYC, store setup)
+- Add/edit/suspend/delete products (B2B pricing, digital/physical)
+- Manage orders, analytics, and reviews
+- Dashboard: products, orders, messages, analytics
 
-### **Scalability:**
-- **Built for Growth:**
-  - Scalable architecture to handle increasing user demands.
+### Service Provider
+- Onboard with profile, skills, portfolio, KYC
+- Add/edit/suspend/delete services (gigs)
+- Browse/apply to service requests
+- Manage service orders, milestones, messaging
 
+### Admin
+- Analytics dashboard: user growth, sales, top products/services, flagged items
+- Manage users, products, services, orders, requests, reviews (edit, suspend, delete)
+- Moderate flagged/suspended items
 
-# **Project Setup**
+---
 
+## Product Categories (Sample)
+- Groceries, Clothing, Electronics, Home appliances, Fresh Produce, Livestock, Farming tools, Fertilizers, Jewelery, Textile, Pottery, Cultural Artifacts, Local Food vendors, Bakeries, Beverages, Womens-jewellery, Construction & Building Material, Education & Learning, Automotive spares
+- **Plus:** Tourism & Travel, Mining & Minerals, Petroleum & Energy, Carbon Credits, Charity, Healthcare, IT, Logistics, Real Estate, Environmental Services, and more
+
+---
+
+## Setup & Installation
 ### Prerequisites
-- Node.js ( version v21.1.0 or later )
-- MongoDB installed and running locally
+- Node.js (v16+), npm
+- MongoDB (local or Atlas)
+- Vercel CLI (for deployment)
 
-### Clone the project
-
-```bash
-  git clone https://github.com/RishiBakshii/mern-ecommerce.git
+### 1. Clone the Repository
+```sh
+git clone https://github.com/your-org/mern-ecommerce.git
+cd mern-ecommerce
 ```
 
-### Navigate to the project directory
-
-```bash
-  cd mern-ecommerce
+### 2. Install Dependencies
+```sh
+cd backend && npm install
+cd ../frontend && npm install
 ```
 
-### Install dependencies for frontend and backend separately
-**Tip:** To efficiently install dependencies for both frontend and backend simultaneously, use split terminals.
+### 3. Environment Variables
+- Copy `.env.example` to `.env` in both `backend/` and `frontend/`.
+- Set MongoDB URI, JWT secret, and any API keys as needed.
 
-Install frontend dependencies
-```bash
-cd frontend
-npm install
-```
-
-Install backend dependencies
-
-```bash
+### 4. Seed Database (Categories, Brands, etc)
+```sh
 cd backend
-npm install
+node seed/seed.js
 ```
 
-
-### Environment Variables
-**Backend**
-- Create a `.env` file in the `backend` directory.
-- Add the following variables with appropriate values
-```bash
-# Database connection string
-MONGO_URI="mongodb://localhost:27017/your-database-name"
-
-# Frontend URL (adjust if needed)
-ORIGIN="http://localhost:3000"
-
-# Email credentials for sending password resets and OTPs
-EMAIL="your-email@example.com"
-PASSWORD="your-email-password"
-
-# Token and cookie expiration settings
-LOGIN_TOKEN_EXPIRATION="30d"  # Days
-OTP_EXPIRATION_TIME="120000"  # Milliseconds
-PASSWORD_RESET_TOKEN_EXPIRATION="2m"  # Minutes
-COOKIE_EXPIRATION_DAYS="30"    # Days
-
-# Secret key for jwt security
-SECRET_KEY="your-secret-key"
-
-# Environment (production/development)
-PRODUCTION="false" # Initially set to false for development
+### 5. Run Locally
+#### Backend
+```sh
+cd backend
+npm run dev
+```
+#### Frontend
+```sh
+cd frontend
+npm start
 ```
 
-**Frontend**
-- Create a `.env` file in the `frontend` directory
-- Add the following variable:
-```bash
-# Backend URL (adjust if needed)
-REACT_APP_BASE_URL="http://localhost:8000" 
-```
+App will be available at `http://localhost:3000` (frontend) and `http://localhost:5000` (backend).
 
-**Important**
-- Replace all placeholders (e.g., your_database_name, your_email) with your actual values.
-- Exclude the `.env` file from version control to protect sensitive information.
+---
 
-### Data seeding
-- **Get started quickly with pre-populated data**: Populate your database with sample users, products, reviews, and carts, enabling you to test functionalities without manual data entry.
+## API Overview
+- RESTful endpoints for all entities (users, products, services, orders, reviews, messages, service requests)
+- JWT authentication, role-based access
+- See `/backend/routes/` for all available endpoints
 
-**Steps**:
-- Open a new terminal window.
-- Navigate to the `backend` directory: `cd backend`
-- Run the seeding script: `npm run seed` ( This script executes the `seed.js` file within the `seed` subdirectory equivalent to running `node seed/seed.js` )
-### Running Development Servers
+---
 
-**Important:**
+## Testing
+- Use the provided shell script (`test-app.sh`) to run backend and frontend tests
+- Manual QA: Register as different roles, test all flows, admin moderation, analytics
 
-- **Separate terminals**: Run the commands in separate terminal windows or use `split terminal` to avoid conflicts.
-- **Nodemon required**: Ensure you have `nodemon` installed globally to run the backend development servers using `npm run dev`. You can install it globally using `npm install -g nodemon`.
+---
 
-#### Start the backend server
-- Navigate to the `backend` directory: `cd backend`
-- Start the server: `npm run dev` (or npm start)
-- You should see a message indicating the server is running, usually on port 8000.
-     
-#### Start the frontend server:
-- Navigate to the `frontend` directory: `cd frontend`
-- Start the server: `npm start`
-- You should see a message indicating the server is running, usually on port 3000.
+## Deployment
+- See `DEPLOYMENT.md` for detailed Vercel deployment tutorial
+- Vercel ready (frontend and backend as separate projects or monorepo)
 
-### Login with demo account (Optional)
-- After successfully seeding the database, you can now explore the application's functionalities using pre-populated sample data.
-- here are the `login credentials`
-```bash
-  email: demo@gmail.com
-  pass: helloWorld@123
-```
+---
 
-- **Please Note**: While the demo account provides a convenient way to explore many features, it has some limitations:
-    - **Password Reset and OTP Verification**: Due to security reasons, the demo account uses a non-real email address. Therefore, password reset and OTP verification functionalities are not available for this account.
+## Contributing
+- Fork, branch, and PR workflow
+- Please open issues for bugs/feature requests
 
-    **What this means**:
-    - You cannot request a password reset or receive verification codes on the demo email address.
-    - To test password reset and OTP verification flows, you need to create a genuine account with a valid email address.
+---
 
-    **What to do?**
-    - If you're primarily interested in exploring other functionalities like wishlist, cart, and order history, the demo account is sufficient.
-    - To test password reset and OTP verification, create a personal account with a valid email address.
-### Accessing the Application
-Once both servers are running, you can access them at the following URL's:
-- Backend: http://localhost:8000
-- Frontend: http://localhost:3000
-
-## **Bonus**
-Don't forget to star the repository and share your feedback!✨
-
-## Authors
-- [@RishiBakshii](https://github.com/RishiBakshii)
+## License
+MIT

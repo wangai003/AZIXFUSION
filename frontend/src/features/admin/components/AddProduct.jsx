@@ -1,27 +1,46 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate} from 'react-router-dom'
 import { addProductAsync, resetProductAddStatus, selectProductAddStatus,updateProductByIdAsync } from '../../products/ProductSlice'
 import { Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useForm } from "react-hook-form"
-import { selectBrands } from '../../brands/BrandSlice'
-import { selectCategories } from '../../categories/CategoriesSlice'
+import { 
+  selectBrands,
+  fetchAllBrandsAsync 
+} from '../../brands/BrandSlice'
+import { 
+  fetchCategories,
+  fetchMainCategories,
+  fetchSubcategories,
+  fetchElements,
+  selectCategories,
+  selectMainCategories,
+  selectSubcategoriesByParent,
+  selectElementsBySubcategory
+} from '../../categories/CategoriesSlice';
 import { toast } from 'react-toastify'
 
 export const AddProduct = () => {
 
-    const {register,handleSubmit,reset,formState: { errors }} = useForm()
+    const {register,handleSubmit,reset,formState: { errors }, watch, setValue } = useForm()
 
     const dispatch=useDispatch()
     const brands=useSelector(selectBrands)
     const categories=useSelector(selectCategories)
+    const mainCategories=useSelector(selectMainCategories)
+    const subcategoriesByParent=useSelector(selectSubcategoriesByParent)
+    const elementsBySubcategory=useSelector(selectElementsBySubcategory)
     const productAddStatus=useSelector(selectProductAddStatus)
     const navigate=useNavigate()
     const theme=useTheme()
     const is1100=useMediaQuery(theme.breakpoints.down(1100))
     const is480=useMediaQuery(theme.breakpoints.down(480))
 
-    useEffect(()=>{
+    // Watch category and subcategory for cascading updates
+    const watchedCategory = watch("category")
+    const watchedSubcategory = watch("subcategory")
+
+    useEffect(() => {
         if(productAddStatus==='fullfilled'){
             reset()
             toast.success("New product added")
@@ -32,11 +51,25 @@ export const AddProduct = () => {
         }
     },[productAddStatus])
 
-    useEffect(()=>{
-        return ()=>{
-            dispatch(resetProductAddStatus())
-        }
-    },[])
+    useEffect(() => {
+        dispatch(fetchCategories());
+        dispatch(fetchMainCategories());
+        dispatch(fetchAllBrandsAsync());
+    }, [dispatch]);
+
+    // Watch for category changes to fetch subcategories
+    useEffect(() => {
+      if (watchedCategory) {
+        dispatch(fetchSubcategories(watchedCategory));
+      }
+    }, [watchedCategory, dispatch]);
+
+    // Watch for subcategory changes to fetch elements
+    useEffect(() => {
+      if (watchedSubcategory) {
+        dispatch(fetchElements(watchedSubcategory));
+      }
+    }, [watchedSubcategory, dispatch]);
 
     const handleAddProduct=(data)=>{
         const newProduct={...data,images:[data.image0,data.image1,data.image2,data.image3]}
@@ -62,7 +95,7 @@ export const AddProduct = () => {
                     <TextField {...register("title",{required:'Title is required'})}/>
                 </Stack> 
 
-                <Stack flexDirection={'row'} >
+                <Stack flexDirection={'row'} gap={2}>
 
                     <FormControl fullWidth>
                         <InputLabel id="brand-selection">Brand</InputLabel>
@@ -70,7 +103,7 @@ export const AddProduct = () => {
                             
                             {
                                 brands.map((brand)=>(
-                                    <MenuItem value={brand._id}>{brand.name}</MenuItem>
+                                    <MenuItem key={brand._id} value={brand._id}>{brand.name}</MenuItem>
                                 ))
                             }
 
@@ -79,12 +112,12 @@ export const AddProduct = () => {
 
 
                     <FormControl fullWidth>
-                        <InputLabel id="category-selection">Category</InputLabel>
-                        <Select {...register("category",{required:"category is required"})} labelId="category-selection" label="Category">
+                        <InputLabel id="category-selection">Main Category</InputLabel>
+                        <Select {...register("category",{required:"Category is required"})} labelId="category-selection" label="Main Category">
                             
                             {
-                                categories.map((category)=>(
-                                    <MenuItem value={category._id}>{category.name}</MenuItem>
+                                mainCategories && mainCategories.map((category)=>(
+                                    <MenuItem key={category._id} value={category._id}>{category.name}</MenuItem>
                                 ))
                             }
 
@@ -93,56 +126,84 @@ export const AddProduct = () => {
 
                 </Stack>
 
+                <Stack flexDirection={'row'} gap={2}>
+
+                    <FormControl fullWidth>
+                        <InputLabel id="subcategory-selection">Subcategory</InputLabel>
+                        <Select 
+                            {...register("subcategory")} 
+                            labelId="subcategory-selection" 
+                            label="Subcategory"
+                            disabled={!watchedCategory}
+                        >
+                            <MenuItem value="">
+                                <em>Select a main category first</em>
+                            </MenuItem>
+                            {watchedCategory && subcategoriesByParent[watchedCategory] && 
+                                subcategoriesByParent[watchedCategory].map((subcat) => (
+                                    <MenuItem key={subcat._id} value={subcat._id}>
+                                        {subcat.name}
+                                    </MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                        <InputLabel id="element-selection">Element</InputLabel>
+                        <Select 
+                            {...register("element")} 
+                            labelId="element-selection" 
+                            label="Element"
+                            disabled={!watchedSubcategory}
+                        >
+                            <MenuItem value="">
+                                <em>Select a subcategory first</em>
+                            </MenuItem>
+                            {watchedSubcategory && elementsBySubcategory[watchedSubcategory] && 
+                                elementsBySubcategory[watchedSubcategory].map((elem) => (
+                                    <MenuItem key={elem._id} value={elem._id}>
+                                        {elem.name}
+                                    </MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
+
+                </Stack>
 
                 <Stack>
-                    <Typography variant='h6' fontWeight={400}  gutterBottom>Description</Typography>
-                    <TextField multiline rows={4} {...register("description",{required:"Description is required"})}/>
-                </Stack>
-
-                <Stack flexDirection={'row'}>
-                    <Stack flex={1}>
-                        <Typography variant='h6' fontWeight={400}  gutterBottom>Price</Typography>
-                        <TextField type='number' {...register("price",{required:"Price is required"})}/>
-                    </Stack>
-                    <Stack flex={1}>
-                        <Typography variant='h6' fontWeight={400}  gutterBottom>Discount {is480?"%":"Percentage"}</Typography>
-                        <TextField type='number' {...register("discountPercentage",{required:"discount percentage is required"})}/>
-                    </Stack>
+                    <Typography variant='h6' fontWeight={400} gutterBottom>Description</Typography>
+                    <TextField {...register("description",{required:'Description is required'})} multiline rows={4}/>
                 </Stack>
 
                 <Stack>
-                    <Typography variant='h6'  fontWeight={400} gutterBottom>Stock Quantity</Typography>
-                    <TextField type='number' {...register("stockQuantity",{required:"Stock Quantity is required"})}/>
-                </Stack>
-                <Stack>
-                    <Typography variant='h6'  fontWeight={400} gutterBottom>Thumbnail</Typography>
-                    <TextField {...register("thumbnail",{required:"Thumbnail is required"})}/>
+                    <Typography variant='h6' fontWeight={400} gutterBottom>Price</Typography>
+                    <TextField {...register("price",{required:'Price is required'})} type="number" />
                 </Stack>
 
                 <Stack>
-                    <Typography variant='h6'  fontWeight={400} gutterBottom>Product Images</Typography>
-
-                    <Stack rowGap={2}>
-   
-                        <TextField {...register("image0",{required:"Image is required"})}/>
-                        <TextField {...register("image1",{required:"Image is required"})}/>
-                        <TextField {...register("image2",{required:"Image is required"})}/>
-                        <TextField {...register("image3",{required:"Image is required"})}/>
-    
-                    </Stack>
-
+                    <Typography variant='h6' fontWeight={400} gutterBottom>Stock Quantity</Typography>
+                    <TextField {...register("stockQuantity",{required:'Stock quantity is required'})} type="number" />
                 </Stack>
 
+                <Stack>
+                    <Typography variant='h6' fontWeight={400} gutterBottom>Thumbnail Image URL</Typography>
+                    <TextField {...register("image0",{required:'Thumbnail image is required'})} />
+                </Stack>
+
+                <Stack>
+                    <Typography variant='h6' fontWeight={400} gutterBottom>Additional Image URLs</Typography>
+                    <TextField {...register("image1")} placeholder="Image 1 (optional)" />
+                    <TextField {...register("image2")} placeholder="Image 2 (optional)" />
+                    <TextField {...register("image3")} placeholder="Image 3 (optional)" />
+                </Stack>
+
+                <Button type="submit" variant="contained" size="large">
+                    Add Product
+                </Button>
             </Stack>
-
-            {/* action area */}
-            <Stack flexDirection={'row'} alignSelf={'flex-end'} columnGap={is480?1:2}>
-                <Button size={is480?'medium':'large'} variant='contained' type='submit'>Add Product</Button>
-                <Button size={is480?'medium':'large'} variant='outlined' color='error' component={Link} to={'/admin/dashboard'}>Cancel</Button>
-            </Stack>
-
         </Stack>
-
     </Stack>
   )
 }

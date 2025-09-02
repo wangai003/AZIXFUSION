@@ -24,7 +24,7 @@ export const createOrder=async(order)=>{
             return res.data;
         }
     } catch (error) {
-        throw error.response.data;
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
 
@@ -33,7 +33,7 @@ export const getOrderByUserId=async(id)=>{
         const res=await axiosi.get(`/orders/user/${id}`)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
 
@@ -42,7 +42,7 @@ export const getAllOrders=async()=>{
         const res=await axiosi.get(`/orders`)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
 
@@ -51,6 +51,21 @@ export const updateOrderById=async(update)=>{
         const res=await axiosi.patch(`/orders/${update._id}`,update)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
+
+export const fetchSellerOrders = async (sellerId) => {
+  const res = await axiosi.get(`/orders?seller=${sellerId}`);
+  return res.data;
+};
+
+export const updateOrderStatus = async (id, data) => {
+  const res = await axiosi.put(`/orders/${id}`, data);
+  return res.data;
+};
+
+export const fetchBuyerOrders = async (buyerId) => {
+  const res = await axiosi.get(`/orders?buyer=${buyerId}`);
+  return res.data;
+};

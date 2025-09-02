@@ -21,8 +21,7 @@ exports.signup=async(req,res)=>{
         req.body.password=hashedPassword
 
         // creating new user
-        const createdUser=new User(req.body)
-        await createdUser.save()
+        const createdUser = await User.create(req.body)
 
         // getting secure user info
         const secureInfo=sanitizeUser(createdUser)
@@ -98,14 +97,15 @@ exports.verifyOtp=async(req,res)=>{
 
         // checks if the otp is expired, if yes then deletes the otp and returns response accordinly
         if(isOtpExisting.expiresAt < new Date()){
-            await Otp.findByIdAndDelete(isOtpExisting._id)
+            await Otp.deleteById(isOtpExisting._id)
             return res.status(400).json({message:"Otp has been expired"})
         }
         
         // checks if otp is there and matches the hash value then updates the user verified status to true and returns the updated user
         if(isOtpExisting && (await bcrypt.compare(req.body.otp,isOtpExisting.otp))){
-            await Otp.findByIdAndDelete(isOtpExisting._id)
-            const verifiedUser=await User.findByIdAndUpdate(isValidUserId._id,{isVerified:true},{new:true})
+            await Otp.deleteById(isOtpExisting._id)
+            await User.updateById(isValidUserId._id,{isVerified:true})
+            const verifiedUser = await User.findById(isValidUserId._id)
             return res.status(200).json(sanitizeUser(verifiedUser))
         }
 
@@ -128,13 +128,20 @@ exports.resendOtp=async(req,res)=>{
             return res.status(404).json({"message":"User not found"})
         }
 
-        await Otp.deleteMany({user:existingUser._id})
+        // Note: FirebaseAdapter doesn't have deleteMany, so we'll need to find and delete individually
+        const existingOtps = await Otp.find({user:existingUser._id})
+        for (const otp of existingOtps) {
+            await Otp.deleteById(otp._id)
+        }
 
         const otp=generateOTP()
         const hashedOtp=await bcrypt.hash(otp,10)
 
-        const newOtp=new Otp({user:req.body.user,otp:hashedOtp,expiresAt:Date.now()+parseInt(process.env.OTP_EXPIRATION_TIME)})
-        await newOtp.save()
+        const newOtp = await Otp.create({
+            user: req.body.user,
+            otp: hashedOtp,
+            expiresAt: Date.now() + parseInt(process.env.OTP_EXPIRATION_TIME)
+        })
 
         await sendMail(existingUser.email,`OTP Verification for Your MERN-AUTH-REDUX-TOOLKIT Account`,`Your One-Time Password (OTP) for account verification is: <b>${otp}</b>.</br>Do not share this OTP with anyone for security reasons`)
 
@@ -156,7 +163,11 @@ exports.forgotPassword=async(req,res)=>{
             return res.status(404).json({message:"Provided email does not exists"})
         }
 
-        await PasswordResetToken.deleteMany({user:isExistingUser._id})
+        // Note: FirebaseAdapter doesn't have deleteMany, so we'll need to find and delete individually
+        const existingTokens = await PasswordResetToken.find({user:isExistingUser._id})
+        for (const token of existingTokens) {
+            await PasswordResetToken.deleteById(token._id)
+        }
 
         // if user exists , generates a password reset token
         const passwordResetToken=generateToken(sanitizeUser(isExistingUser),true)
@@ -165,8 +176,11 @@ exports.forgotPassword=async(req,res)=>{
         const hashedToken=await bcrypt.hash(passwordResetToken,10)
 
         // saves hashed token in passwordResetToken collection
-        newToken=new PasswordResetToken({user:isExistingUser._id,token:hashedToken,expiresAt:Date.now() + parseInt(process.env.OTP_EXPIRATION_TIME)})
-        await newToken.save()
+        newToken = await PasswordResetToken.create({
+            user: isExistingUser._id,
+            token: hashedToken,
+            expiresAt: Date.now() + parseInt(process.env.OTP_EXPIRATION_TIME)
+        })
 
         // sends the password reset link to the user's mail
         await sendMail(isExistingUser.email,'Password Reset Link for Your MERN-AUTH-REDUX-TOOLKIT Account',`<p>Dear ${isExistingUser.name},
@@ -209,7 +223,7 @@ exports.resetPassword=async(req,res)=>{
 
         // if the token has expired then deletes the token, and send response accordingly
         if(isResetTokenExisting.expiresAt < new Date()){
-            await PasswordResetToken.findByIdAndDelete(isResetTokenExisting._id)
+            await PasswordResetToken.deleteById(isResetTokenExisting._id)
             return res.status(404).json({message:"Reset Link has been expired"})
         }
 
@@ -217,10 +231,10 @@ exports.resetPassword=async(req,res)=>{
         if(isResetTokenExisting && isResetTokenExisting.expiresAt>new Date() && (await bcrypt.compare(req.body.token,isResetTokenExisting.token))){
 
             // deleting the password reset token
-            await PasswordResetToken.findByIdAndDelete(isResetTokenExisting._id)
+            await PasswordResetToken.deleteById(isResetTokenExisting._id)
 
             // resets the password after hashing it
-            await User.findByIdAndUpdate(isExistingUser._id,{password:await bcrypt.hash(req.body.password,10)})
+            await User.updateById(isExistingUser._id,{password:await bcrypt.hash(req.body.password,10)})
             return res.status(200).json({message:"Password Updated Successfuly"})
         }
 

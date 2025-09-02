@@ -8,5 +8,7 @@ router
     .get('/product/:id',reviewController.getByProductId)
     .patch('/:id',reviewController.updateById)
     .delete("/:id",reviewController.deleteById)
+    .get('/service/:id',reviewController.getByServiceId)
+    .get('/user/:id',reviewController.getByRevieweeId)
 
 module.exports=router

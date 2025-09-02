@@ -5,6 +5,6 @@ export const fetchAllBrands=async()=>{
         const res=await axiosi.get("/brands")
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }

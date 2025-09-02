@@ -7,6 +7,8 @@ import { Address } from '../../address/components/Address'
 import { useForm } from 'react-hook-form'
 import { LoadingButton } from '@mui/lab'
 import {toast} from 'react-toastify'
+import { ReviewsList } from '../../review/ReviewsList'
+import { ReviewForm } from '../../review/ReviewForm'
 
 export const UserProfile = () => {
 
@@ -72,6 +74,10 @@ export const UserProfile = () => {
     },[])
 
     const handleAddAddress=(data)=>{
+        if (!userInfo || !userInfo._id) {
+            toast.error('You must be logged in to add an address.');
+            return;
+        }
         const address={...data,user:userInfo._id}
         dispatch(addAddressAsync(address))
         setAddAddress(false)
@@ -168,7 +174,8 @@ export const UserProfile = () => {
 
             </Stack>
 
-
+            {userInfo && userInfo._id && <ReviewsList userId={userInfo._id} />}
+            {userInfo && userInfo._id && <ReviewForm revieweeId={userInfo._id} />}
 
     </Stack>
   )

@@ -14,6 +14,14 @@ import { SignupPage } from "./SignupPage";
 import { UserOrdersPage } from "./UserOrdersPage";
 import { UserProfilePage } from "./UserProfilePage";
 import { WishlistPage } from "./WishlistPage";
+import { MarketplaceList } from '../features/products/components/ProductList';
+import { BecomeSellerPage } from './BecomeSellerPage';
+import { SellerDashboardPage } from './SellerDashboardPage';
+import { BuyerDashboardPage } from './BuyerDashboardPage';
+import { ServiceRequestPage } from './ServiceRequestPage';
+import { AdminDashboardPage } from './AdminDashboardPage';
+import ServicesPage from './ServicesPage';
+import { GoodsMarketplace } from '../features/products/components/GoodsMarketplace';
 
 export {
     SignupPage,
@@ -31,5 +39,13 @@ export {
     AddProductPage,
     AdminOrdersPage,
     WishlistPage,
-    OtpVerificationPage
+    OtpVerificationPage,
+    MarketplaceList,
+    BecomeSellerPage,
+    SellerDashboardPage,
+    BuyerDashboardPage,
+    ServiceRequestPage,
+    AdminDashboardPage,
+    ServicesPage,
+    GoodsMarketplace
 }

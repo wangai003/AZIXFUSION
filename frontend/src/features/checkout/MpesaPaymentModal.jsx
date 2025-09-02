@@ -20,7 +20,7 @@ const MpesaPaymentModal = ({ open, onClose, amount }) => {
 
       if (response.data.ResponseCode === '0') {
         // Payment initiated successfully
-        alert('Please check your phone for the STK push notification');
+        console.warn('Please check your phone for the STK push notification');
         onClose();
       } else {
         setError('Failed to initiate payment. Please try again.');
@@ -34,13 +34,22 @@ const MpesaPaymentModal = ({ open, onClose, amount }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="sm" 
+      fullWidth
+      aria-labelledby="mpesa-payment-title"
+      aria-describedby="mpesa-payment-description"
+      disableRestoreFocus
+      keepMounted={false}
+    >
+      <DialogTitle id="mpesa-payment-title">
         <Typography variant="h6" component="div">
           Mpesa Payment
         </Typography>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent id="mpesa-payment-description">
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <Typography variant="body1" sx={{ mb: 2 }}>
             Amount to pay: KES {amount}

@@ -1,43 +1,35 @@
 require('dotenv').config()
-const jwt=require('jsonwebtoken')
-const { sanitizeUser } = require('../utils/SanitizeUser')
+const admin = require('firebase-admin');
 
-exports.verifyToken=async(req,res,next)=>{
-    try {
-        // extract the token from request cookies
-        const {token}=req.cookies
-
-        // if token is not there, return 401 response
-        if(!token){
-            return res.status(401).json({message:"Token missing, please login again"})
-        }
-
-        // verifies the token 
-        const decodedInfo=jwt.verify(token,process.env.SECRET_KEY)
-
-        // checks if decoded info contains legit details, then set that info in req.user and calls next
-        if(decodedInfo && decodedInfo._id && decodedInfo.email){
-            req.user=decodedInfo
-            next()
-        }
-
-        // if token is invalid then sends the response accordingly
-        else{
-            return res.status(401).json({message:"Invalid Token, please login again"})
-        }
-        
-    } catch (error) {
-
-        console.log(error);
-        
-        if (error instanceof jwt.TokenExpiredError) {
-            return res.status(401).json({ message: "Token expired, please login again" });
-        } 
-        else if (error instanceof jwt.JsonWebTokenError) {
-            return res.status(401).json({ message: "Invalid Token, please login again" });
-        } 
-        else {
-            return res.status(500).json({ message: "Internal Server Error" });
-        }
-    }
+// Initialize Firebase Admin if not already initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+  });
 }
+
+const verifyToken = async (req, res, next) => {
+  try {
+    let idToken = null;
+    // Try to get token from Authorization header (Bearer) or cookies
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+      idToken = req.headers.authorization.split('Bearer ')[1];
+    } else if (req.cookies && req.cookies.token) {
+      idToken = req.cookies.token;
+    }
+    if (!idToken) {
+      res.clearCookie('token');
+      return res.status(401).json({ message: 'Token missing, please login again' });
+    }
+    // Verify Firebase ID token
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    console.log('Token verification failed:', error.message);
+    res.clearCookie('token');
+    return res.status(401).json({ message: 'Invalid or expired token, please login again' });
+  }
+};
+
+module.exports = verifyToken;

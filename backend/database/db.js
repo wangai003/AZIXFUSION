@@ -1,16 +1,27 @@
-require('dotenv').config();
-const mongoose = require("mongoose");
+const { db, admin, withTransaction } = require('./firebase');
 
-exports.connectToDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI, { 
-            useNewUrlParser: true, 
-            useUnifiedTopology: true 
-        });
+// Function to initialize the database connection
+async function connectToDatabase() {
+  try {
+    // Firebase is already initialized in the firebase.js file
+    // This function is kept for compatibility with the existing code
+    console.log("✅ Connected to Firebase database.");
+    return db;
+  } catch (err) {
+    console.error("❌ Firebase connection error:", err);
+    process.exit(1);
+  }
+}
 
-        console.log("MongoDB Connected Successfully ✅");
-    } catch (error) {
-        console.error("MongoDB Connection Error ❌:", error);
-        process.exit(1);  // Exit process on failure
-    }
-};
+// Function to get the database instance
+function getDb() {
+  return db;
+}
+
+// Function to get the Firebase admin instance
+function getClient() {
+  return admin;
+}
+
+module.exports = { connectToDatabase, getDb, getClient, withTransaction };
+

@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import { createReview, deleteReviewById, fetchReviewsByProductId, updateReviewById } from './ReviewApi'
+import { createReview, deleteReviewById, fetchReviewsByProductId, updateReviewById, fetchProductReviews, fetchServiceReviews, fetchUserReviews } from './ReviewApi'
 
 
 const initialState={
@@ -10,7 +10,18 @@ const initialState={
     reviewFetchStatus:"idle",
     reviews:[],
     errors:null,
-    successMessage:null
+    successMessage:null,
+    productReviews: [],
+    productReviewsStatus: 'idle',
+    productReviewsError: null,
+    serviceReviews: [],
+    serviceReviewsStatus: 'idle',
+    serviceReviewsError: null,
+    userReviews: [],
+    userReviewsStatus: 'idle',
+    userReviewsError: null,
+    reviewActionStatus: 'idle',
+    reviewActionError: null,
 }
 
 export const createReviewAsync=createAsyncThunk('review/createReviewAsync',async(review)=>{
@@ -33,6 +44,18 @@ export const deleteReviewByIdAsync=createAsyncThunk('reviews/deleteReviewByIdAsy
     return deletedReview
 })
 
+export const fetchProductReviewsAsync = createAsyncThunk('reviews/fetchProductReviewsAsync', async (productId) => {
+  return await fetchProductReviews(productId);
+});
+
+export const fetchServiceReviewsAsync = createAsyncThunk('reviews/fetchServiceReviewsAsync', async (serviceId) => {
+  return await fetchServiceReviews(serviceId);
+});
+
+export const fetchUserReviewsAsync = createAsyncThunk('reviews/fetchUserReviewsAsync', async (userId) => {
+  return await fetchUserReviews(userId);
+});
+
 const reviewSlice=createSlice({
     name:"reviewSlice",
     initialState:initialState,
@@ -52,16 +75,21 @@ const reviewSlice=createSlice({
     },
     extraReducers:(builder)=>{
         builder
+            // createReviewAsync - handles both general reviews and action status
             .addCase(createReviewAsync.pending,(state)=>{
                 state.reviewAddStatus='pending'
+                state.reviewActionStatus = 'pending';
             })
             .addCase(createReviewAsync.fulfilled,(state,action)=>{
                 state.reviewAddStatus='fulfilled'
+                state.reviewActionStatus = 'fulfilled';
                 state.reviews.push(action.payload)
             })
             .addCase(createReviewAsync.rejected,(state,action)=>{
                 state.reviewAddStatus='rejected'
+                state.reviewActionStatus = 'rejected';
                 state.errors=action.error
+                state.reviewActionError = action.error;
             })
 
             .addCase(fetchReviewsByProductIdAsync.pending,(state)=>{
@@ -82,7 +110,7 @@ const reviewSlice=createSlice({
             .addCase(updateReviewByIdAsync.fulfilled,(state,action)=>{
                 state.reviewUpdateStatus='fulfilled'
                 const index=state.reviews.findIndex((review)=>review._id===action.payload._id)
-                state.reviews[index]=action.payload
+                if (index !== -1) state.reviews[index]=action.payload
             })
             .addCase(updateReviewByIdAsync.rejected,(state,action)=>{
                 state.reviewUpdateStatus='rejected'
@@ -100,6 +128,40 @@ const reviewSlice=createSlice({
                 state.reviewDeleteStatus='rejected'
                 state.errors=action.error
             })
+
+            .addCase(fetchProductReviewsAsync.pending, (state) => {
+                state.productReviewsStatus = 'pending';
+            })
+            .addCase(fetchProductReviewsAsync.fulfilled, (state, action) => {
+                state.productReviewsStatus = 'fulfilled';
+                state.productReviews = action.payload;
+            })
+            .addCase(fetchProductReviewsAsync.rejected, (state, action) => {
+                state.productReviewsStatus = 'rejected';
+                state.productReviewsError = action.error;
+            })
+            .addCase(fetchServiceReviewsAsync.pending, (state) => {
+                state.serviceReviewsStatus = 'pending';
+            })
+            .addCase(fetchServiceReviewsAsync.fulfilled, (state, action) => {
+                state.serviceReviewsStatus = 'fulfilled';
+                state.serviceReviews = action.payload;
+            })
+            .addCase(fetchServiceReviewsAsync.rejected, (state, action) => {
+                state.serviceReviewsStatus = 'rejected';
+                state.serviceReviewsError = action.error;
+            })
+            .addCase(fetchUserReviewsAsync.pending, (state) => {
+                state.userReviewsStatus = 'pending';
+            })
+            .addCase(fetchUserReviewsAsync.fulfilled, (state, action) => {
+                state.userReviewsStatus = 'fulfilled';
+                state.userReviews = action.payload;
+            })
+            .addCase(fetchUserReviewsAsync.rejected, (state, action) => {
+                state.userReviewsStatus = 'rejected';
+                state.userReviewsError = action.error;
+            });
     }
 })
 
@@ -113,6 +175,17 @@ export const selectReviewAddStatus=(state)=>state.ReviewSlice.reviewAddStatus
 export const selectReviewDeleteStatus=(state)=>state.ReviewSlice.reviewDeleteStatus
 export const selectReviewUpdateStatus=(state)=>state.ReviewSlice.reviewUpdateStatus
 export const selectReviewFetchStatus=(state)=>state.ReviewSlice.reviewFetchStatus
+export const selectProductReviews = (state) => state.ReviewSlice.productReviews;
+export const selectProductReviewsStatus = (state) => state.ReviewSlice.productReviewsStatus;
+export const selectProductReviewsError = (state) => state.ReviewSlice.productReviewsError;
+export const selectServiceReviews = (state) => state.ReviewSlice.serviceReviews;
+export const selectServiceReviewsStatus = (state) => state.ReviewSlice.serviceReviewsStatus;
+export const selectServiceReviewsError = (state) => state.ReviewSlice.serviceReviewsError;
+export const selectUserReviews = (state) => state.ReviewSlice.userReviews;
+export const selectUserReviewsStatus = (state) => state.ReviewSlice.userReviewsStatus;
+export const selectUserReviewsError = (state) => state.ReviewSlice.userReviewsError;
+export const selectReviewActionStatus = (state) => state.ReviewSlice.reviewActionStatus;
+export const selectReviewActionError = (state) => state.ReviewSlice.reviewActionError;
 
 // exporting actions
 export const {resetReviewAddStatus,resetReviewDeleteStatus,resetReviewUpdateStatus,resetReviewFetchStatus}=reviewSlice.actions

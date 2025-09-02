@@ -5,7 +5,7 @@ export const addAddress=async(address)=>{
         const res=await axiosi.post("/address",address)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
 export const fetchAddressByUserId=async(id)=>{
@@ -13,7 +13,7 @@ export const fetchAddressByUserId=async(id)=>{
         const res=await axiosi.get(`/address/user/${id}`)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
 export const updateAddressById=async(update)=>{
@@ -21,7 +21,7 @@ export const updateAddressById=async(update)=>{
         const res=await axiosi.patch(`/address/${update._id}`,update)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }
 export const deleteAddressById=async(id)=>{
@@ -29,6 +29,6 @@ export const deleteAddressById=async(id)=>{
         const res=await axiosi.delete(`/address/${id}`)
         return res.data
     } catch (error) {
-        throw error.response.data
+        throw error.response?.data || error.message || "Unknown error";
     }
 }

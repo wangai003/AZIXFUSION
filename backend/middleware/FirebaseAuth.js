@@ -1,14 +1,15 @@
 const admin = require('firebase-admin');
+const path = require('path');
 const User = require('../models/User');
 
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-    })
-});
+// Initialize Firebase Admin SDK only if not already initialized
+if (!admin.apps.length) {
+    const serviceAccountPath = path.join(__dirname, '..', 'azix-7ffe4-firebase-adminsdk-ak0g7-5f17ffc18f.json');
+    
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountPath)
+    });
+}
 
 // Middleware to verify Firebase token and attach user data
 const verifyFirebaseToken = async (req, res, next) => {
@@ -25,18 +26,18 @@ const verifyFirebaseToken = async (req, res, next) => {
         let user = await User.findOne({ firebaseUid: decodedToken.uid });
 
         if (!user) {
-            // Create new user if not exists
-            user = new User({
+            // Create new user if not exists using the FirebaseAdapter create method
+            const userData = {
                 firebaseUid: decodedToken.uid,
                 email: decodedToken.email,
                 name: decodedToken.name || decodedToken.email.split('@')[0],
                 isVerified: decodedToken.email_verified
-            });
-            await user.save();
+            };
+            user = await User.create(userData);
         }
 
-        // Update last login
-        await User.findByIdAndUpdate(user._id, {
+        // Update last login using the FirebaseAdapter updateById method
+        await User.updateById(user._id, {
             lastLogin: new Date(),
         });
 
