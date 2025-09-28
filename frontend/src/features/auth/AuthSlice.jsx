@@ -39,7 +39,7 @@ export const checkAuthAsync = createAsyncThunk('auth/checkAuthAsync', async () =
           console.log('checkAuthAsync - Got ID token');
           
           // Fetch complete user data from backend
-          const apiUrl = `${process.env.REACT_APP_BASE_URL || 'http://localhost:8000'}/users/check-auth`;
+          const apiUrl = `https://azixfusion.vercel.app/users/check-auth`;
           console.log('checkAuthAsync - Calling API:', apiUrl);
           
           const response = await fetch(apiUrl, {
@@ -105,8 +105,8 @@ export const refreshUserDataAsync = createAsyncThunk('auth/refreshUserDataAsync'
     console.log('refreshUserDataAsync - Current user:', user);
     const idToken = await user.getIdToken();
     console.log('refreshUserDataAsync - Got ID token');
-    
-    const apiUrl = `${process.env.REACT_APP_BASE_URL || 'http://localhost:8000'}/users/check-auth`;
+
+    const apiUrl = `https://azixfusion.vercel.app/users/check-auth`;
     console.log('refreshUserDataAsync - Calling API:', apiUrl);
     
     const response = await fetch(apiUrl, {

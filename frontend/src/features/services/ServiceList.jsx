@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAllServicesAsync, selectAllServices, selectAllServicesStatus } from './ServiceSlice';
+import { fetchAllServicesAsync, selectAllServices, selectAllServicesStatus, selectSearchResults, selectSearchStatus } from './ServiceSlice';
 import { Card, CardContent, CardMedia, Typography, Grid, CircularProgress, Box, Chip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -60,16 +60,23 @@ const ServiceCard = ({ service }) => {
   );
 };
 
-export const ServiceList = () => {
+export const ServiceList = ({ services: propServices, status: propStatus, showLoading = true }) => {
   const dispatch = useDispatch();
-  const services = useSelector(selectAllServices);
-  const status = useSelector(selectAllServicesStatus);
+  const defaultServices = useSelector(selectAllServices);
+  const defaultStatus = useSelector(selectAllServicesStatus);
+
+  // Use props if provided, otherwise use default from Redux
+  const services = propServices || defaultServices;
+  const status = propStatus || defaultStatus;
 
   useEffect(() => {
-    dispatch(fetchAllServicesAsync());
-  }, [dispatch]);
+    // Only fetch if no services are provided via props
+    if (!propServices && dispatch) {
+      dispatch(fetchAllServicesAsync());
+    }
+  }, [dispatch, propServices]);
 
-  if (status === 'pending') {
+  if (showLoading && status === 'pending') {
     return <Box textAlign="center" mt={4}><CircularProgress /></Box>;
   }
 

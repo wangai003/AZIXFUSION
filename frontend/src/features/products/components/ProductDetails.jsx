@@ -13,6 +13,12 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import CachedOutlinedIcon from '@mui/icons-material/CachedOutlined';
 import Favorite from '@mui/icons-material/Favorite'
+import LanguageIcon from '@mui/icons-material/Language';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LaunchIcon from '@mui/icons-material/Launch';
 import { createWishlistItemAsync, deleteWishlistItemByIdAsync, resetWishlistItemAddStatus, resetWishlistItemDeleteStatus, selectWishlistItemAddStatus, selectWishlistItemDeleteStatus, selectWishlistItems } from '../../wishlist/WishlistSlice'
 import { useTheme } from '@mui/material'
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
@@ -460,6 +466,88 @@ export const ProductDetails = () => {
                                         </Stack>
                                     )}
                                     
+                                    <Divider />
+                                </Stack>
+                            )}
+
+                            {/* Seller Social Media Links */}
+                            {product?.sellerSocialMedia && (
+                                <Stack rowGap={".8rem"}>
+                                    <Typography variant="h6" fontWeight={600} color="primary.main">
+                                        Seller Information
+                                    </Typography>
+
+                                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                                        Connect with the seller on social media for more information and updates.
+                                    </Typography>
+
+                                    <Stack direction="row" spacing={2} flexWrap="wrap">
+                                        {product.sellerSocialMedia.website && (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<LanguageIcon />}
+                                                endIcon={<LaunchIcon />}
+                                                size="small"
+                                                onClick={() => window.open(product.sellerSocialMedia.website, '_blank')}
+                                                sx={{ textTransform: 'none' }}
+                                            >
+                                                Website
+                                            </Button>
+                                        )}
+
+                                        {product.sellerSocialMedia.linkedin && (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<LinkedInIcon />}
+                                                endIcon={<LaunchIcon />}
+                                                size="small"
+                                                onClick={() => window.open(product.sellerSocialMedia.linkedin, '_blank')}
+                                                sx={{ textTransform: 'none', color: '#0077b5', borderColor: '#0077b5' }}
+                                            >
+                                                LinkedIn
+                                            </Button>
+                                        )}
+
+                                        {product.sellerSocialMedia.facebook && (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<FacebookIcon />}
+                                                endIcon={<LaunchIcon />}
+                                                size="small"
+                                                onClick={() => window.open(product.sellerSocialMedia.facebook, '_blank')}
+                                                sx={{ textTransform: 'none', color: '#1877f2', borderColor: '#1877f2' }}
+                                            >
+                                                Facebook
+                                            </Button>
+                                        )}
+
+                                        {product.sellerSocialMedia.twitter && (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<TwitterIcon />}
+                                                endIcon={<LaunchIcon />}
+                                                size="small"
+                                                onClick={() => window.open(product.sellerSocialMedia.twitter, '_blank')}
+                                                sx={{ textTransform: 'none', color: '#1da1f2', borderColor: '#1da1f2' }}
+                                            >
+                                                Twitter
+                                            </Button>
+                                        )}
+
+                                        {product.sellerSocialMedia.instagram && (
+                                            <Button
+                                                variant="outlined"
+                                                startIcon={<InstagramIcon />}
+                                                endIcon={<LaunchIcon />}
+                                                size="small"
+                                                onClick={() => window.open(product.sellerSocialMedia.instagram, '_blank')}
+                                                sx={{ textTransform: 'none', color: '#e4405f', borderColor: '#e4405f' }}
+                                            >
+                                                Instagram
+                                            </Button>
+                                        )}
+                                    </Stack>
+
                                     <Divider />
                                 </Stack>
                             )}

@@ -21,14 +21,43 @@ const lipaNaMpesaRoutes = require("./routes/routes.lipanampesa")
 const serviceRoutes = require('./routes/Service');
 const messageRoutes = require('./routes/Message');
 const serviceRequestRoutes = require('./routes/ServiceRequest');
+const auctionScheduler = require('./services/FirebaseAuctionScheduler');
+const auctionRoutes = require('./routes/Auction');
+const experienceRoutes = require('./routes/Experience');
+const exportProductRoutes = require('./routes/ExportProduct');
+const webSocketService = require('./services/WebSocketService');
 
 // server init
 const server=express()
 
 // database connection and server start
 connectToDatabase().then(() => {
+    // Start auction scheduler
+    auctionScheduler.start();
+
     // middlewares
-    server.use(cors({ origin: process.env.ORIGIN, credentials: true, exposedHeaders: ['X-Total-Count'], methods: ['GET', 'POST', 'PATCH', 'DELETE'] }));
+    const allowedOrigins = [
+        process.env.ORIGIN, // Production URL
+        'http://localhost:3000', // Development frontend
+        'http://localhost:3001', // Alternative development port
+        'https://azixfusion.vercel.app' // Vercel deployment
+    ];
+
+    server.use(cors({
+        origin: function (origin, callback) {
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
+
+            if (allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
+        credentials: true,
+        exposedHeaders: ['X-Total-Count'],
+        methods: ['GET', 'POST', 'PATCH', 'DELETE', 'PUT', 'OPTIONS']
+    }));
     server.use(express.json());
     server.use(cookieParser());
     server.use(morgan("tiny"));
@@ -51,11 +80,14 @@ connectToDatabase().then(() => {
     server.use("/address", addressRoutes);
     server.use("/reviews", reviewRoutes);
     server.use("/wishlist", wishlistRoutes);
-    server.use("/payments", paymentRoutes); 
+    server.use("/payments", paymentRoutes);
     server.use('/api',lipaNaMpesaRoutes)// Add payment routes
     server.use('/api/services', serviceRoutes);
     server.use('/api/messages', messageRoutes);
     server.use('/api/service-requests', serviceRequestRoutes);
+    server.use('/auctions', auctionRoutes);
+    server.use('/experiences', experienceRoutes);
+    server.use('/export-products', exportProductRoutes);
 
     server.get("/", (req, res) => {
         res.status(200).json({ message: 'running' });
@@ -93,9 +125,13 @@ connectToDatabase().then(() => {
         }
     });
 
-    server.listen(8000, () => {
+    const httpServer = server.listen(8000, () => {
         console.log('server [STARTED] ~ http://localhost:8000');
     });
+
+    // Initialize WebSocket service
+    webSocketService.initialize(httpServer);
+    console.log('WebSocket service initialized');
 }).catch((err) => {
     console.error('Failed to connect to DB. Server not started.');
 });

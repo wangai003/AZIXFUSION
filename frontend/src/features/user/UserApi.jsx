@@ -38,3 +38,27 @@ export const fetchSellerDashboard = async () => {
         throw error.response?.data || error.message || "Unknown error"
     }
 };
+
+export const becomeExperienceHost = async (data) => {
+    try {
+        const idToken = await getFirebaseIdToken();
+        const res = await axiosi.post('/users/become-experience-host', data, {
+            headers: idToken ? { Authorization: `Bearer ${idToken}` } : {}
+        });
+        return res.data;
+    } catch (error) {
+        throw error.response?.data || error.message || "Unknown error"
+    }
+};
+
+export const becomeExporter = async (data) => {
+    try {
+        const idToken = await getFirebaseIdToken();
+        const res = await axiosi.post('/users/apply-exporter', data, {
+            headers: idToken ? { Authorization: `Bearer ${idToken}` } : {}
+        });
+        return res.data;
+    } catch (error) {
+        throw error.response?.data || error.message || "Unknown error"
+    }
+};

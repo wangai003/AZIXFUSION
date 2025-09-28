@@ -517,7 +517,7 @@ export const GoodsMarketplace = () => {
         >
           <Box>
             <Typography variant="h4" fontWeight={700} color="primary.main" gutterBottom>
-              Goods Marketplace
+              Retail & Consumer Goods
             </Typography>
             <Typography variant="body1" color="text.secondary">
               Discover amazing products exclusively from verified goods sellers

@@ -15,13 +15,12 @@ import {
   Paper
 } from '@mui/material';
 import { Stack } from '@mui/material';
-import { QRCodePng, appStorePng, googlePlayPng, facebookPng, instagramPng, twitterPng, linkedinPng } from '../../assets';
+import { facebookPng, instagramPng, twitterPng, linkedinPng } from '../../assets';
 import SendIcon from '@mui/icons-material/Send';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 export const Footer = () => {
@@ -96,10 +95,10 @@ export const Footer = () => {
           {/* Brand & Subscribe */}
           <Grid item xs={12} md={4}>
             <Box sx={{ mb: 3 }}>
-              <img 
-                src="https://files.catbox.moe/4l70v0.png" 
-                alt="AEM Logo" 
-                style={{ height: "100px", width: "auto", filter: "brightness(0) invert(1)" }} 
+              <img
+                src="https://files.catbox.moe/r7gvct.png"
+                alt="AEM Logo"
+                style={{ height: "100px", width: "auto", filter: "brightness(0) invert(1)" }}
               />
             </Box>
             
@@ -220,68 +219,11 @@ export const Footer = () => {
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
                 <EmailOutlinedIcon sx={{ color: 'primary.main', mt: 0.3 }} />
                 <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  azix.africa@gmail.com
+                  support@azix.world
                 </Typography>
               </Box>
               
-              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                <PhoneOutlinedIcon sx={{ color: 'primary.main', mt: 0.3 }} />
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  +254 725280695
-                </Typography>
-              </Box>
             </Stack>
-            
-            <Box sx={{ mt: 4 }}>
-              <Typography variant="h6" fontWeight={600} gutterBottom>
-                Download App
-              </Typography>
-              
-              <Typography variant="body2" sx={{ mb: 2, opacity: 0.8 }}>
-                Save $3 with App New User Only
-              </Typography>
-              
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Box 
-                  component="img" 
-                  src={QRCodePng} 
-                  alt="QR Code"
-                  sx={{ 
-                    width: 80, 
-                    height: 80, 
-                    borderRadius: 1,
-                    bgcolor: 'white',
-                    p: 1
-                  }}
-                />
-                
-                <Stack spacing={1}>
-                  <Box 
-                    component="img" 
-                    src={googlePlayPng} 
-                    alt="Google Play"
-                    sx={{ 
-                      height: 32,
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s',
-                      '&:hover': { transform: 'scale(1.05)' }
-                    }}
-                  />
-                  
-                  <Box 
-                    component="img" 
-                    src={appStorePng} 
-                    alt="App Store"
-                    sx={{ 
-                      height: 32,
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s',
-                      '&:hover': { transform: 'scale(1.05)' }
-                    }}
-                  />
-                </Stack>
-              </Stack>
-            </Box>
           </Grid>
           
           {/* Account */}
@@ -363,7 +305,7 @@ export const Footer = () => {
           }}
         >
           <Typography variant="body2" sx={{ opacity: 0.7 }}>
-            &copy; AEM {new Date().getFullYear()}. All rights reserved
+            &copy; Azix fusion {new Date().getFullYear()}. All rights reserved
           </Typography>
           
           <Box 

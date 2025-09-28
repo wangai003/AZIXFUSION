@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchSellerServices, fetchAllServices, addService, updateService, deleteService } from './ServiceApi';
+import { fetchSellerServices, fetchAllServices, searchServices, addService, updateService, deleteService } from './ServiceApi';
 
 const initialState = {
   sellerServices: [],
@@ -10,14 +10,21 @@ const initialState = {
   allServices: [],
   allServicesStatus: 'idle',
   allServicesError: null,
+  searchResults: [],
+  searchStatus: 'idle',
+  searchError: null,
 };
 
 export const fetchSellerServicesAsync = createAsyncThunk('services/fetchSellerServicesAsync', async (providerId) => {
   return await fetchSellerServices(providerId);
 });
 
-export const fetchAllServicesAsync = createAsyncThunk('services/fetchAllServicesAsync', async () => {
-  return await fetchAllServices();
+export const fetchAllServicesAsync = createAsyncThunk('services/fetchAllServicesAsync', async (params = {}) => {
+  return await fetchAllServices(params);
+});
+
+export const searchServicesAsync = createAsyncThunk('services/searchServicesAsync', async (params = {}) => {
+  return await searchServices(params);
 });
 
 export const addServiceAsync = createAsyncThunk('services/addServiceAsync', async (data) => {
@@ -59,6 +66,17 @@ const serviceSlice = createSlice({
       .addCase(fetchAllServicesAsync.rejected, (state, action) => {
         state.allServicesStatus = 'rejected';
         state.allServicesError = action.error;
+      })
+      .addCase(searchServicesAsync.pending, (state) => {
+        state.searchStatus = 'pending';
+      })
+      .addCase(searchServicesAsync.fulfilled, (state, action) => {
+        state.searchStatus = 'fulfilled';
+        state.searchResults = action.payload;
+      })
+      .addCase(searchServicesAsync.rejected, (state, action) => {
+        state.searchStatus = 'rejected';
+        state.searchError = action.error;
       })
       .addCase(addServiceAsync.pending, (state) => {
         state.serviceActionStatus = 'pending';
@@ -105,5 +123,8 @@ export const selectServiceActionError = (state) => state.ServiceSlice.serviceAct
 export const selectAllServices = (state) => state.ServiceSlice.allServices;
 export const selectAllServicesStatus = (state) => state.ServiceSlice.allServicesStatus;
 export const selectAllServicesError = (state) => state.ServiceSlice.allServicesError;
+export const selectSearchResults = (state) => state.ServiceSlice.searchResults;
+export const selectSearchStatus = (state) => state.ServiceSlice.searchStatus;
+export const selectSearchError = (state) => state.ServiceSlice.searchError;
 
 export default serviceSlice.reducer; 

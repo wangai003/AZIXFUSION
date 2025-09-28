@@ -145,10 +145,22 @@ exports.becomeSeller = async (req, res) => {
       return res.status(400).json({ error: 'Seller type is required.' });
     }
 
-    // Get current roles and add seller role if not already present
+    // Get current roles and add appropriate role based on seller type
     const currentRoles = user.roles || ['user'];
-    if (!currentRoles.includes('seller')) {
-      currentRoles.push('seller');
+
+    if (req.body.sellerType === 'exporter') {
+      // For exporters, add both 'seller' and 'exporter' roles
+      if (!currentRoles.includes('seller')) {
+        currentRoles.push('seller');
+      }
+      if (!currentRoles.includes('exporter')) {
+        currentRoles.push('exporter');
+      }
+    } else {
+      // For regular sellers, add only 'seller' role
+      if (!currentRoles.includes('seller')) {
+        currentRoles.push('seller');
+      }
     }
 
     // Accept all fields from the frontend form and automatically make them a seller
@@ -162,6 +174,41 @@ exports.becomeSeller = async (req, res) => {
       registrationNumber: req.body.registrationNumber || '',
       address: req.body.address || '',
       taxId: req.body.taxId || '',
+      // Social media links (mandatory for sellers)
+      socialMedia: {
+        website: req.body.website || '',
+        linkedin: req.body.linkedin || '',
+        facebook: req.body.facebook || '',
+        twitter: req.body.twitter || '',
+        instagram: req.body.instagram || ''
+      },
+
+      // Export-specific information (for exporters only)
+      ...(req.body.sellerType === 'exporter' && {
+        exportDetails: {
+          exportLicenseNumber: req.body.exportLicenseNumber,
+          exportLicenseExpiry: req.body.exportLicenseExpiry,
+          businessLicenseNumber: req.body.businessLicenseNumber,
+          businessLicenseExpiry: req.body.businessLicenseExpiry,
+          taxIdentificationNumber: req.body.taxIdentificationNumber,
+          bankName: req.body.bankName,
+          bankAccountNumber: req.body.bankAccountNumber,
+          bankSwiftCode: req.body.bankSwiftCode,
+          primaryExportMarkets: req.body.primaryExportMarkets || [],
+          exportExperience: req.body.exportExperience,
+          annualExportVolume: req.body.annualExportVolume,
+          mainExportProducts: req.body.mainExportProducts,
+          qualityCertifications: req.body.qualityCertifications || [],
+          insuranceProvider: req.body.insuranceProvider,
+          insurancePolicyNumber: req.body.insurancePolicyNumber,
+          insuranceExpiry: req.body.insuranceExpiry,
+          warehouseAddress: req.body.warehouseAddress,
+          shippingMethods: req.body.shippingMethods || [],
+          paymentTerms: req.body.paymentTerms || [],
+          references: req.body.references || []
+        }
+      }),
+
       // logo: req.body.logo || null, // handle logo upload separately if needed
     };
     
@@ -200,16 +247,232 @@ exports.becomeVendor = async (req, res) => {
     if (user.roles && user.roles.includes('seller')) {
       return res.status(400).json({ error: 'Already a vendor.' });
     }
-    
+
     // Update user with new roles and seller type
     const updatedUser = await require('../models/User').updateById(req.user._id, {
       roles: [...(user.roles || []), 'seller'],
       sellerType: sellerType
     });
-    
+
     res.json({ success: true, user: updatedUser });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+exports.becomeExperienceHost = async (req, res) => {
+  try {
+    console.log('becomeExperienceHost called with:', {
+      body: req.body,
+      user: req.user,
+      userId: req.user?._id,
+      firebaseUserId: req.user?.user_id || req.user?.uid
+    });
+
+    // Get the user ID from Firebase auth (could be user_id or uid)
+    const userId = req.user?.user_id || req.user?.uid || req.user?._id;
+
+    if (!req.user || !userId) {
+      console.log('No user or user ID found in request');
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    const userRef = db.collection('users').doc(userId);
+    let userDoc = await userRef.get();
+
+    let user;
+    if (!userDoc.exists) {
+      console.log('User document not found, creating new user document for ID:', userId);
+
+      // Create a new user document with the data from Firebase auth
+      const newUserData = {
+        email: req.user.email,
+        name: req.user.name || '',
+        roles: ['user'],
+        active: true,
+        createdAt: new Date().toISOString(),
+        // Add any other fields you want to store
+      };
+
+      await userRef.set(newUserData);
+      console.log('New user document created');
+      user = newUserData;
+    } else {
+      user = userDoc.data();
+      console.log('Found existing user:', { email: user.email, roles: user.roles, hostType: user.hostType });
+    }
+
+    if (user.hostType) {
+      console.log('User already has host type:', user.hostType);
+      return res.status(400).json({ error: 'Host type already set and cannot be changed.' });
+    }
+
+    // Get current roles and add host role if not already present
+    const currentRoles = user.roles || ['user'];
+    if (!currentRoles.includes('experience_host')) {
+      currentRoles.push('experience_host');
+    }
+
+    // Accept all fields from the frontend form and automatically make them a host
+    const updateData = {
+      hostType: 'local_experience_host',
+      roles: currentRoles,
+      hostVerificationStatus: 'pending', // New field for admin verification
+      hostProfile: {
+        businessName: req.body.businessName || '',
+        description: req.body.description || '',
+        yearsOfExperience: req.body.yearsOfExperience || 0,
+        specializations: req.body.specializations || [],
+        languages: req.body.languages || ['English'],
+        certifications: req.body.certifications || [],
+        emergencyContact: req.body.emergencyContact || '',
+        insuranceInfo: req.body.insuranceInfo || '',
+        location: req.body.location || '',
+        website: req.body.website || '',
+        socialMedia: req.body.socialMedia || {}
+      },
+      // Store KYC/business registration details
+      businessRegistration: {
+        registrationNumber: req.body.registrationNumber || '',
+        taxId: req.body.taxId || '',
+        address: req.body.businessAddress || '',
+        licenseType: req.body.licenseType || '',
+        expiryDate: req.body.licenseExpiryDate || ''
+      }
+    };
+
+    console.log('Updating user with host data:', updateData);
+    await userRef.update(updateData);
+    console.log('User updated successfully as experience host');
+
+    // Send welcome email to the new host
+    try {
+      if (process.env.EMAIL && process.env.PASSWORD) {
+        await sendMail(user.email, 'Welcome to AZIXFUSION as a Local Experience Host!', 'Congratulations! Your application to become a Local Experience Host has been received. Our team will review your application and verify your credentials within 2-3 business days. You will receive another email once your account is activated.');
+        console.log('Welcome email sent successfully');
+      } else {
+        console.log('Email credentials not configured, skipping welcome email');
+      }
+    } catch (emailError) {
+      console.log('Failed to send welcome email:', emailError);
+      // Don't fail the request if email fails
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.log('Error in becomeExperienceHost:', err);
+    res.status(400).json({ error: err.message });
+  }
+};
+
+exports.applyExporter = async (req, res) => {
+  try {
+    console.log('applyExporter called with:', {
+      body: req.body,
+      user: req.user,
+      userId: req.user?._id,
+      firebaseUserId: req.user?.user_id || req.user?.uid
+    });
+
+    // Get the user ID from Firebase auth (could be user_id or uid)
+    const userId = req.user?.user_id || req.user?.uid || req.user?._id;
+
+    if (!req.user || !userId) {
+      console.log('No user or user ID found in request');
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    const userRef = db.collection('users').doc(userId);
+    let userDoc = await userRef.get();
+
+    let user;
+    if (!userDoc.exists) {
+      console.log('User document not found, creating new user document for ID:', userId);
+
+      // Create a new user document with the data from Firebase auth
+      const newUserData = {
+        email: req.user.email,
+        name: req.user.name || '',
+        roles: ['user'],
+        active: true,
+        createdAt: new Date().toISOString(),
+        // Add any other fields you want to store
+      };
+
+      await userRef.set(newUserData);
+      console.log('New user document created');
+      user = newUserData;
+    } else {
+      user = userDoc.data();
+      console.log('Found existing user:', { email: user.email, roles: user.roles, exporterType: user.exporterType });
+    }
+
+    if (user.exporterType) {
+      console.log('User already has exporter type:', user.exporterType);
+      return res.status(400).json({ error: 'Exporter type already set and cannot be changed.' });
+    }
+
+    // Get current roles and add exporter role if not already present
+    const currentRoles = user.roles || ['user'];
+    if (!currentRoles.includes('exporter')) {
+      currentRoles.push('exporter');
+    }
+
+    // Accept all fields from the frontend form and automatically make them an exporter
+    const updateData = {
+      exporterType: 'african_export_vendor',
+      roles: currentRoles,
+      exporterVerificationStatus: 'pending', // New field for admin verification
+      exporterProfile: {
+        companyName: req.body.companyName || '',
+        businessType: req.body.businessType || '',
+        registrationNumber: req.body.registrationNumber || '',
+        taxId: req.body.taxId || '',
+        yearEstablished: req.body.yearEstablished || '',
+        employeeCount: req.body.employeeCount || '',
+        businessAddress: req.body.businessAddress || '',
+        city: req.body.city || '',
+        country: req.body.country || 'Kenya',
+        postalCode: req.body.postalCode || '',
+        businessPhone: req.body.businessPhone || '',
+        businessEmail: req.body.businessEmail || '',
+        exportExperience: req.body.exportExperience || '',
+        mainMarkets: req.body.mainMarkets || [],
+        exportCertifications: req.body.exportCertifications || [],
+        annualExportValue: req.body.annualExportValue || '',
+        primaryProducts: req.body.primaryProducts || '',
+        website: req.body.website || '',
+        linkedin: req.body.linkedin || '',
+        facebook: req.body.facebook || '',
+        twitter: req.body.twitter || '',
+        instagram: req.body.instagram || '',
+        businessDescription: req.body.businessDescription || '',
+        exportStrategy: req.body.exportStrategy || '',
+        references: req.body.references || ''
+      }
+    };
+
+    console.log('Updating user with exporter data:', updateData);
+    await userRef.update(updateData);
+    console.log('User updated successfully as exporter');
+
+    // Send welcome email to the new exporter
+    try {
+      if (process.env.EMAIL && process.env.PASSWORD) {
+        await sendMail(user.email, 'Welcome to AZIXFUSION as an African Export Vendor!', 'Congratulations! Your application to become an African Export Vendor has been received. Our team will review your application and verify your credentials within 2-3 business days. You will receive another email once your account is activated.');
+        console.log('Welcome email sent successfully');
+      } else {
+        console.log('Email credentials not configured, skipping welcome email');
+      }
+    } catch (emailError) {
+      console.log('Failed to send welcome email:', emailError);
+      // Don't fail the request if email fails
+    }
+
+    res.json({ success: true });
+  } catch (err) {
+    console.log('Error in applyExporter:', err);
+    res.status(400).json({ error: err.message });
   }
 };
 

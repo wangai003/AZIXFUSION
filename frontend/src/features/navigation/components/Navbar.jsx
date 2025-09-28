@@ -44,6 +44,9 @@ import { selectProductIsFilterOpen, toggleFilters } from '../../products/Product
 import CurrencySelector from '../../currency/CurrencySelector';
 import { motion } from 'framer-motion';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import GavelIcon from '@mui/icons-material/Gavel';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import PublicIcon from '@mui/icons-material/Public';
 
 export const Navbar = ({ isProductList = false }) => {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -59,7 +62,9 @@ export const Navbar = ({ isProductList = false }) => {
   console.log('Navbar - user roles:', loggedInUser?.roles);
   console.log('Navbar - sellerType:', loggedInUser?.sellerType);
   console.log('Navbar - isAdmin:', loggedInUser?.isAdmin);
+  console.log('Navbar - seller check result:', loggedInUser?.roles?.includes('seller'));
   console.log('Navbar - should show admin options:', loggedInUser?.isAdmin || (loggedInUser?.roles?.includes('seller') && loggedInUser?.sellerType === 'goods'));
+  console.log('Navbar - should show seller dashboard:', loggedInUser?.roles?.includes('seller'));
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -95,12 +100,19 @@ export const Navbar = ({ isProductList = false }) => {
     ...(loggedInUser?.roles?.includes('seller') ? [
       { name: 'Seller Dashboard', to: "/seller/dashboard", icon: <StorefrontIcon /> }
     ] : []),
+    // Add exporter dashboard link if user is an exporter
+    ...(loggedInUser?.roles?.includes('exporter') ? [
+      { name: 'Exporter Dashboard', to: "/exporter/dashboard", icon: <PublicIcon /> }
+    ] : []),
     { name: 'Logout', to: "/logout", icon: <LogoutIcon /> },
   ];
 
   const navLinks = [
-    { name: "Goods Marketplace", to: "/goods-marketplace", icon: <StorefrontIcon /> },
+    { name: "Retail & Consumer Goods", to: "/goods-marketplace", icon: <StorefrontIcon /> },
+    { name: "African Exports & Global Trade", to: "/export-marketplace", icon: <PublicIcon /> },
+    { name: "Live Bidding Hub", to: "/auctions", icon: <GavelIcon /> },
     { name: "Services", to: "/services", icon: <HandymanIcon /> },
+    { name: "Local Experiences", to: "/experiences", icon: <LocationOnIcon /> },
   ];
 
   return (
@@ -120,10 +132,10 @@ export const Navbar = ({ isProductList = false }) => {
         <Toolbar sx={{ p: 1, minHeight: "4.5rem", display: "flex", justifyContent: "space-between" }}>
           {/* Logo */}
           <Box component={Link} to="/" sx={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-            <img 
-              src="https://files.catbox.moe/4l70v0.png" 
-              alt="AEM Logo" 
-              style={{ height: "100px", width: "auto" }} 
+            <img
+              src="https://files.catbox.moe/r7gvct.png"
+              alt="AEM Logo"
+              style={{ height: "100px", width: "auto" }}
             />
           </Box>
 
@@ -400,10 +412,10 @@ export const Navbar = ({ isProductList = false }) => {
       >
         <Box sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-            <img 
-              src="https://files.catbox.moe/4l70v0.png" 
-              alt="AEM Logo" 
-              style={{ height: "80px", width: "auto" }} 
+            <img
+              src="https://files.catbox.moe/r7gvct.png"
+              alt="AEM Logo"
+              style={{ height: "80px", width: "auto" }}
             />
           </Box>
           

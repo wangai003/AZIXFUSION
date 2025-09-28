@@ -3,15 +3,21 @@ import { createTheme } from "@mui/material/styles";
 export const theme = createTheme({
   palette: {
     primary: {
-      main: "#3a86ff", // Modern blue
-      light: "#ffffff",
-      dark: "#2667cc", // Darker blue
+      main: "#d4af37", // Rich gold
+      light: "#f4e87c",
+      dark: "#b8860b", // Dark goldenrod
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#ff006e", // Vibrant pink
-      light: "#ffb3d9",
-      dark: "#c1004e",
+      main: "#2e8b57", // Sea green
+      light: "#5cb85c",
+      dark: "#1e5b2f",
+      contrastText: "#ffffff",
+    },
+    tertiary: {
+      main: "#228b22", // Forest green
+      light: "#32cd32",
+      dark: "#006400",
       contrastText: "#ffffff",
     },
     error: {
@@ -30,6 +36,13 @@ export const theme = createTheme({
       default: "#f8f9fa",
       paper: "#ffffff",
       dark: "#212529",
+      gradient: {
+        primary: "linear-gradient(135deg, #d4af37 0%, #b8860b 100%)",
+        secondary: "linear-gradient(135deg, #2e8b57 0%, #228b22 100%)",
+        goldGreen: "linear-gradient(135deg, #d4af37 0%, #2e8b57 50%, #228b22 100%)",
+        subtle: "linear-gradient(135deg, #f8f9fa 0%, #e8f5e8 100%)",
+        card: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
+      },
     },
     text: {
       primary: "#212529",
@@ -203,24 +216,51 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 12,
           textTransform: 'none',
-          fontWeight: 500,
+          fontWeight: 600,
           boxShadow: 'none',
-          padding: '8px 20px',
+          padding: '10px 24px',
+          background: 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)',
+          color: '#ffffff',
+          border: '2px solid transparent',
+          backgroundClip: 'padding-box',
+          transition: 'all 0.3s ease',
           '&:hover': {
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+            background: 'linear-gradient(135deg, #b8860b 0%, #d4af37 100%)',
+            boxShadow: '0 8px 20px rgba(212, 175, 55, 0.3)',
+            transform: 'translateY(-2px)',
           },
         },
         contained: {
+          background: 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)',
           '&:hover': {
-            boxShadow: '0 6px 16px rgba(0,0,0,0.12)',
+            background: 'linear-gradient(135deg, #b8860b 0%, #d4af37 100%)',
+            boxShadow: '0 8px 25px rgba(212, 175, 55, 0.4)',
+          },
+        },
+        containedSecondary: {
+          background: 'linear-gradient(135deg, #2e8b57 0%, #228b22 100%)',
+          '&:hover': {
+            background: 'linear-gradient(135deg, #228b22 0%, #2e8b57 100%)',
+            boxShadow: '0 8px 25px rgba(46, 139, 87, 0.4)',
           },
         },
         outlined: {
-          borderWidth: 1.5,
+          borderWidth: 2,
+          borderColor: '#d4af37',
+          color: '#d4af37',
+          background: 'transparent',
           '&:hover': {
-            borderWidth: 1.5,
+            borderColor: '#b8860b',
+            color: '#b8860b',
+            background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(184, 134, 11, 0.1) 100%)',
+          },
+        },
+        text: {
+          color: '#2e8b57',
+          '&:hover': {
+            background: 'linear-gradient(135deg, rgba(46, 139, 87, 0.1) 0%, rgba(34, 139, 34, 0.1) 100%)',
           },
         },
       },
@@ -250,28 +290,36 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 16,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+          boxShadow: '0 4px 20px rgba(212, 175, 55, 0.1)',
           overflow: 'hidden',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          border: '1px solid rgba(212, 175, 55, 0.1)',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            boxShadow: '0 8px 30px rgba(212, 175, 55, 0.15)',
+            transform: 'translateY(-2px)',
+            borderColor: 'rgba(212, 175, 55, 0.2)',
+          },
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
+        root: {
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          border: '1px solid rgba(212, 175, 55, 0.05)',
+        },
         rounded: {
           borderRadius: 16,
         },
         elevation1: {
-          boxShadow: '0 2px 12px rgba(0,0,0,0.05)',
+          boxShadow: '0 2px 12px rgba(212, 175, 55, 0.08)',
         },
         elevation2: {
-          boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
+          boxShadow: '0 4px 16px rgba(212, 175, 55, 0.12)',
         },
-      },
-    },
-    MuiAppBar: {
-      styleOverrides: {
-        root: {
-          boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+        elevation3: {
+          boxShadow: '0 6px 20px rgba(212, 175, 55, 0.15)',
         },
       },
     },
@@ -279,22 +327,62 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 8,
+            borderRadius: 12,
+            background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+            border: '2px solid rgba(212, 175, 55, 0.1)',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              borderColor: 'rgba(212, 175, 55, 0.3)',
+              boxShadow: '0 4px 12px rgba(212, 175, 55, 0.1)',
+            },
+            '&.Mui-focused': {
+              borderColor: '#d4af37',
+              boxShadow: '0 6px 16px rgba(212, 175, 55, 0.2)',
+            },
           },
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)',
+          boxShadow: '0 4px 20px rgba(212, 175, 55, 0.3)',
+          borderBottom: '2px solid rgba(184, 134, 11, 0.3)',
         },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 12,
+          background: 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)',
+          color: '#ffffff',
+          fontWeight: 600,
+          border: '2px solid transparent',
+          backgroundClip: 'padding-box',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            background: 'linear-gradient(135deg, #b8860b 0%, #d4af37 100%)',
+            boxShadow: '0 4px 12px rgba(212, 175, 55, 0.3)',
+            transform: 'translateY(-1px)',
+          },
+        },
+        colorSecondary: {
+          background: 'linear-gradient(135deg, #2e8b57 0%, #228b22 100%)',
+          '&:hover': {
+            background: 'linear-gradient(135deg, #228b22 0%, #2e8b57 100%)',
+            boxShadow: '0 4px 12px rgba(46, 139, 87, 0.3)',
+          },
         },
       },
     },
     MuiAvatar: {
       styleOverrides: {
         root: {
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          boxShadow: '0 4px 12px rgba(212, 175, 55, 0.2)',
+          border: '3px solid transparent',
+          background: 'linear-gradient(135deg, #d4af37, #b8860b) padding-box, linear-gradient(135deg, #d4af37 0%, #b8860b 100%) border-box',
         },
       },
     },

@@ -116,6 +116,20 @@ class Product {
           images: product.images,
           imagesCount: product.images ? product.images.length : 0
         });
+
+        // Include seller social media information if available
+        if (product.creatorId) {
+          try {
+            const User = require('./User');
+            const userModel = new User();
+            const seller = await userModel.getById(product.creatorId);
+            if (seller && seller.socialMedia) {
+              product.sellerSocialMedia = seller.socialMedia;
+            }
+          } catch (sellerError) {
+            console.warn('Could not fetch seller social media for product:', id, sellerError.message);
+          }
+        }
       }
       return product;
     } catch (error) {

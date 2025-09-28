@@ -62,25 +62,25 @@ const featuredServices = [
 
 // Features list
 const features = [
-  { 
-    icon: <ShoppingBagOutlinedIcon fontSize="large" />, 
-    title: 'Easy Shopping', 
+  {
+    icon: <ShoppingBagOutlinedIcon fontSize="large" />,
+    title: 'Easy Shopping',
     description: 'Browse and purchase products with a seamless checkout experience.'
   },
-  { 
-    icon: <StorefrontOutlinedIcon fontSize="large" />, 
-    title: 'Marketplace', 
+  {
+    icon: <StorefrontOutlinedIcon fontSize="large" />,
+    title: 'Marketplace',
     description: 'Connect with trusted sellers offering quality products and services.'
   },
-  { 
-    icon: <HandymanOutlinedIcon fontSize="large" />, 
-    title: 'Service Booking', 
+  {
+    icon: <HandymanOutlinedIcon fontSize="large" />,
+    title: 'Service Booking',
     description: 'Find and book professional services with verified providers.'
   },
-  { 
-    icon: <SellOutlinedIcon fontSize="large" />, 
-    title: 'Sell Your Products', 
-    description: 'Create your store and start selling to a global audience.'
+  {
+    icon: <SellOutlinedIcon fontSize="large" />,
+    title: 'Local Experiences',
+    description: 'Discover authentic local adventures and cultural experiences with expert hosts.'
   },
 ];
 
@@ -190,12 +190,12 @@ export const HomePage = () => {
                       Explore Marketplace
                     </Button>
                     
-                    <Button 
-                      component={Link} 
-                      to="/services" 
-                      variant="outlined" 
+                    <Button
+                      component={Link}
+                      to="/services"
+                      variant="outlined"
                       size="large"
-                      sx={{ 
+                      sx={{
                         py: 1.5,
                         px: 3,
                         borderRadius: 3,
@@ -204,6 +204,22 @@ export const HomePage = () => {
                       }}
                     >
                       Find Services
+                    </Button>
+
+                    <Button
+                      component={Link}
+                      to="/experiences"
+                      variant="outlined"
+                      size="large"
+                      sx={{
+                        py: 1.5,
+                        px: 3,
+                        borderRadius: 3,
+                        fontWeight: 600,
+                        borderWidth: 2
+                      }}
+                    >
+                      Local Experiences
                     </Button>
                     
                     <Button 
@@ -530,7 +546,7 @@ export const HomePage = () => {
               <Button
                 variant={activeTab === 'services' ? 'contained' : 'outlined'}
                 onClick={() => setActiveTab('services')}
-                sx={{ 
+                sx={{
                   px: 4,
                   py: 1,
                   borderRadius: 3,
@@ -538,6 +554,19 @@ export const HomePage = () => {
                 }}
               >
                 Services
+              </Button>
+
+              <Button
+                variant={activeTab === 'experiences' ? 'contained' : 'outlined'}
+                onClick={() => setActiveTab('experiences')}
+                sx={{
+                  px: 4,
+                  py: 1,
+                  borderRadius: 3,
+                  fontWeight: 600
+                }}
+              >
+                Experiences
               </Button>
             </Stack>
           </Box>
@@ -559,8 +588,8 @@ export const HomePage = () => {
                   <Grid container spacing={3}>
                     {featuredProducts.map((product) => (
                       <Grid item xs={12} sm={6} md={3} key={product._id || product.id}>
-                        <Card 
-                          sx={{ 
+                        <Card
+                          sx={{
                             height: '100%',
                             display: 'flex',
                             flexDirection: 'column',
@@ -630,22 +659,22 @@ export const HomePage = () => {
                               </Box>
                             )}
                           </Box>
-                          
+
                           <CardContent sx={{ flexGrow: 1, p: 3 }}>
                             <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
                               {product.title || product.name}
                             </Typography>
-                            
+
                             <Typography variant="h6" color="primary.main" fontWeight={700} sx={{ mb: 2 }}>
                               ${product.price || 'N/A'}
                             </Typography>
-                            
+
                             <Button
                               variant="outlined"
                               fullWidth
                               component={Link}
                               to={`/product-details/${product._id || product.id}`}
-                              sx={{ 
+                              sx={{
                                 mt: 'auto',
                                 borderRadius: 2,
                                 textTransform: 'none',
@@ -670,7 +699,7 @@ export const HomePage = () => {
                   </Box>
                 )}
               </motion.div>
-            ) : (
+            ) : activeTab === 'services' ? (
               <motion.div
                 key="services"
                 initial={{ opacity: 0, y: 20 }}
@@ -681,8 +710,8 @@ export const HomePage = () => {
                 <Grid container spacing={3}>
                   {featuredServices.map((service) => (
                     <Grid item xs={12} sm={6} md={4} key={service.id}>
-                      <Card 
-                        sx={{ 
+                      <Card
+                        sx={{
                           height: '100%',
                           display: 'flex',
                           flexDirection: 'column',
@@ -716,22 +745,22 @@ export const HomePage = () => {
                             }}
                           />
                         </Box>
-                        
+
                         <CardContent sx={{ flexGrow: 1, p: 3 }}>
                           <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
                             {service.name}
                           </Typography>
-                          
+
                           <Typography variant="h6" color="primary.main" fontWeight={700} sx={{ mb: 2 }}>
                             {service.price}
                           </Typography>
-                          
+
                           <Button
                             variant="outlined"
                             fullWidth
                             component={Link}
                             to={`/services`}
-                            sx={{ 
+                            sx={{
                               mt: 'auto',
                               borderRadius: 2,
                               textTransform: 'none',
@@ -746,24 +775,104 @@ export const HomePage = () => {
                   ))}
                 </Grid>
               </motion.div>
+            ) : (
+              <motion.div
+                key="experiences"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Grid container spacing={3}>
+                  {featuredServices.map((experience, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={`experience-${index}`}>
+                      <Card
+                        sx={{
+                          height: '100%',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          transition: 'transform 0.3s, box-shadow 0.3s',
+                          '&:hover': {
+                            transform: 'translateY(-8px)',
+                            boxShadow: '0 12px 24px rgba(0,0,0,0.1)',
+                          },
+                          borderRadius: 3,
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <Box sx={{ position: 'relative' }}>
+                          <CardMedia
+                            component="img"
+                            height="200"
+                            image={experience.image}
+                            alt={experience.name}
+                            sx={{ objectFit: 'cover' }}
+                          />
+                          <Chip
+                            label="Local Experience"
+                            size="small"
+                            sx={{
+                              position: 'absolute',
+                              top: 12,
+                              left: 12,
+                              bgcolor: 'background.paper',
+                              fontWeight: 500,
+                              fontSize: '0.75rem'
+                            }}
+                          />
+                        </Box>
+
+                        <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                          <Typography variant="h6" component="h3" fontWeight={600} gutterBottom>
+                            {experience.name}
+                          </Typography>
+
+                          <Typography variant="h6" color="primary.main" fontWeight={700} sx={{ mb: 2 }}>
+                            {experience.price}
+                          </Typography>
+
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            component={Link}
+                            to={`/experiences`}
+                            sx={{
+                              mt: 'auto',
+                              borderRadius: 2,
+                              textTransform: 'none',
+                              fontWeight: 600
+                            }}
+                          >
+                            Explore Experiences
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </motion.div>
             )}
           </AnimatePresence>
           
           <Box sx={{ textAlign: 'center', mt: 6 }}>
             <Button
               component={Link}
-              to={activeTab === 'products' ? '/goods-marketplace' : '/services'}
+              to={
+                activeTab === 'products' ? '/goods-marketplace' :
+                activeTab === 'services' ? '/services' :
+                '/experiences'
+              }
               variant="contained"
               size="large"
               endIcon={<ArrowForwardIcon />}
-              sx={{ 
+              sx={{
                 py: 1.5,
                 px: 4,
                 borderRadius: 3,
                 fontWeight: 600
               }}
             >
-              View All {activeTab === 'products' ? 'Products' : 'Services'}
+              View All {activeTab === 'products' ? 'Products' : activeTab === 'services' ? 'Services' : 'Experiences'}
             </Button>
           </Box>
         </Container>

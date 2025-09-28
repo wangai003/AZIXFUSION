@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Grid, Paper, Chip, Stack, Tabs, Tab } from '@mui/material';
+import { Box, Typography, Grid, Paper, Chip, Stack, Tabs, Tab, Button } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchSellerDashboardAsync, selectSellerDashboard, selectSellerDashboardStatus } from '../features/user/UserSlice';
@@ -8,6 +8,7 @@ import { ServiceManagement } from '../features/seller/ServiceManagement';
 import { OrderManagement } from '../features/seller/OrderManagement';
 import { SellerMessaging } from '../features/seller/SellerMessaging';
 import { selectLoggedInUser } from '../features/auth/AuthSlice';
+import { refreshUserDataAsync } from '../features/auth/AuthSlice';
 
 export const SellerDashboardPage = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,12 @@ export const SellerDashboardPage = () => {
   const dashboardStatus = useSelector(selectSellerDashboardStatus);
   const loggedInUser = useSelector(selectLoggedInUser);
   const [tab, setTab] = useState(0);
+
+  // Debug: Log user data when accessing seller dashboard
+  console.log('SellerDashboardPage - loggedInUser:', loggedInUser);
+  console.log('SellerDashboardPage - user roles:', loggedInUser?.roles);
+  console.log('SellerDashboardPage - sellerType:', loggedInUser?.sellerType);
+  console.log('SellerDashboardPage - is seller:', loggedInUser?.roles?.includes('seller'));
   
   // Move useEffect before any early returns
   useEffect(() => { 
@@ -45,6 +52,38 @@ export const SellerDashboardPage = () => {
       }
     }
   }, [tab, dashboard, dashboardStatus, loggedInUser]);
+
+  // Check if user is actually a seller
+  if (!loggedInUser?.roles?.includes('seller')) {
+    const handleRefreshUserData = () => {
+      dispatch(refreshUserDataAsync());
+    };
+
+    return (
+      <Box mt={6} textAlign="center">
+        <Typography variant="h5" color="error" gutterBottom>
+          Access Denied
+        </Typography>
+        <Typography>
+          You need to be a seller to access this dashboard.
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          Current user roles: {loggedInUser?.roles?.join(', ') || 'none'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          User ID: {loggedInUser?._id}
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleRefreshUserData}
+          sx={{ mt: 2 }}
+        >
+          Refresh User Data
+        </Button>
+      </Box>
+    );
+  }
 
   if (dashboardStatus === 'pending') return <Box mt={6} textAlign="center"><Typography>Loading dashboard...</Typography></Box>;
   if (dashboardStatus === 'rejected') return <Box mt={6} textAlign="center"><Typography color="error">Failed to load dashboard.</Typography></Box>;

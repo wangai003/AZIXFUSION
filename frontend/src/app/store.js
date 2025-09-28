@@ -12,6 +12,7 @@ import WishlistSlice from '../features/wishlist/WishlistSlice'
 import currencyReducer from '../features/currency/currencySlice'
 import AdminReducer from '../features/admin/AdminSlice'
 import ServiceSlice from '../features/services/ServiceSlice';
+import auctionSlice from '../features/auctions/auctionSlice';
 
 export const store=configureStore({
     reducer:{
@@ -28,5 +29,6 @@ export const store=configureStore({
         AdminSlice: AdminReducer,
         currency: currencyReducer,
         ServiceSlice,
+        auctions: auctionSlice,
     }
 })

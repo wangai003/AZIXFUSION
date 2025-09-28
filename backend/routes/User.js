@@ -5,6 +5,8 @@ const router = express.Router();
 
 console.log('becomeSeller:', typeof userController.becomeSeller);
 console.log('becomeVendor:', typeof userController.becomeVendor);
+console.log('becomeExperienceHost:', typeof userController.becomeExperienceHost);
+console.log('applyExporter:', typeof userController.applyExporter);
 console.log('signup:', typeof userController.signup);
 console.log('login:', typeof userController.login);
 console.log('checkAuth:', typeof userController.checkAuth);
@@ -25,6 +27,8 @@ router
   .patch('/:id', userController.updateById)
   .post('/become-seller', VerifyToken, userController.becomeSeller)
   .post('/become-vendor', VerifyToken, userController.becomeVendor)
+  .post('/become-experience-host', VerifyToken, userController.becomeExperienceHost)
+  .post('/apply-exporter', VerifyToken, userController.applyExporter)
   .get('/seller/dashboard', VerifyToken, userController.getSellerDashboard)
   .get('/admin/analytics', userController.adminAnalytics)
   .post('/:id/approve-seller', VerifyToken, userController.approveSeller)

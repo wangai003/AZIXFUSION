@@ -14,13 +14,55 @@ export const fetchSellerServices = async (providerId) => {
   }
 };
 
-export const fetchAllServices = async () => {
+export const fetchAllServices = async (params = {}) => {
   try {
-    const res = await axiosi.get('/api/services');
+    // Build query string from params
+    const queryParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          value.forEach(v => queryParams.append(key, v));
+        } else {
+          queryParams.append(key, value);
+        }
+      }
+    });
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/api/services?${queryString}` : '/api/services';
+
+    const res = await axiosi.get(url);
     return res.data;
   } catch (error) {
     console.error('Error fetching all services:', error);
     throw error.response?.data || error.message || 'Failed to fetch services';
+  }
+};
+
+export const searchServices = async (params = {}) => {
+  try {
+    // Build query string from params
+    const queryParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        if (Array.isArray(value)) {
+          value.forEach(v => queryParams.append(key, v));
+        } else {
+          queryParams.append(key, value);
+        }
+      }
+    });
+
+    const queryString = queryParams.toString();
+    const url = queryString ? `/api/services/search?${queryString}` : '/api/services/search';
+
+    const res = await axiosi.get(url);
+    return res.data;
+  } catch (error) {
+    console.error('Error searching services:', error);
+    throw error.response?.data || error.message || 'Failed to search services';
   }
 };
 

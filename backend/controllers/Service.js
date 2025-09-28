@@ -167,31 +167,19 @@ exports.create = async (req, res) => {
 
 exports.getAll = async (req, res) => {
     try {
-        console.log('Fetching services with enhanced query:', req.query);
-        
-        let query = db.collection(SERVICES_COLLECTION);
-        
-        // Enhanced filtering options
-        if (req.query.category) query = query.where('category', '==', req.query.category);
-        if (req.query.subcategory) query = query.where('subcategory', '==', req.query.subcategory);
-        if (req.query.provider) query = query.where('provider', '==', req.query.provider);
-        if (req.query.isActive) query = query.where('isActive', '==', req.query.isActive === 'true');
-        if (req.query.isFeatured) query = query.where('isFeatured', '==', req.query.isFeatured === 'true');
-        if (req.query.pricingModel) query = query.where('pricingModel', '==', req.query.pricingModel);
-        if (req.query.serviceLevel) query = query.where('serviceLevel', '==', req.query.serviceLevel);
-        if (req.query.minPrice) query = query.where('packages.0.price', '>=', parseFloat(req.query.minPrice));
-        if (req.query.maxPrice) query = query.where('packages.0.price', '<=', parseFloat(req.query.maxPrice));
-        
-        const snapshot = await query.get();
+        console.log('Fetching all services from services collection');
+
+        // Simple query - just get all documents from services collection
+        const snapshot = await db.collection(SERVICES_COLLECTION).get();
         const services = snapshot.docs.map(convertDoc);
-        
-        console.log(`Found ${services.length} services with enhanced filtering`);
+
+        console.log(`Found ${services.length} services in services collection`);
         res.status(200).json(services);
     } catch (error) {
-        console.error('Error fetching enhanced services:', error);
-        res.status(500).json({ 
+        console.error('Error fetching services:', error);
+        res.status(500).json({
             message: 'Error fetching services, please try again later',
-            error: error.message 
+            error: error.message
         });
     }
 };

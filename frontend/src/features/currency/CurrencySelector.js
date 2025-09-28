@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedCurrency, selectCurrency } from './currencySlice';
 import { Box, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
@@ -30,10 +30,8 @@ const CurrencySelector = () => {
                     onChange={handleCurrencyChange}
                 >
                     <MenuItem value="AKOFA">AKOFA</MenuItem>
-                    <MenuItem value="USD">USD</MenuItem>
-                    <MenuItem value="KES">KES</MenuItem>
+                    <MenuItem value="USDC">USDC</MenuItem>
                     <MenuItem value="BTC">BTC</MenuItem>
-                    <MenuItem value="ETH">ETH</MenuItem>
                     <MenuItem value="USDT">USDT</MenuItem>
                 </Select>
             </FormControl>
@@ -51,15 +49,11 @@ export const formatPrice = (amount, selectedCurrency, rates) => {
     const convertedAmount = amount * rates[selectedCurrency];
     
     switch (selectedCurrency) {
-        case 'USD':
+        case 'USDC':
         case 'USDT':
             return `$${convertedAmount.toFixed(2)}`;
-        case 'KES':
-            return `KES ${convertedAmount.toFixed(2)}`;
         case 'BTC':
             return `₿${convertedAmount.toFixed(8)}`;
-        case 'ETH':
-            return `Ξ${convertedAmount.toFixed(6)}`;
         default:
             return `${convertedAmount.toFixed(2)} ${selectedCurrency}`;
     }

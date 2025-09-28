@@ -53,7 +53,7 @@ export const Signup = () => {
       <Stack flex={1} justifyContent={'center'} alignItems={'center'}>
         <Stack flexDirection={'row'} justifyContent={'center'} alignItems={'center'}>
           <Stack rowGap={'.4rem'}>
-            <img src="https://files.catbox.moe/4l70v0.png" alt="AEM Logo" style={{ height: '130px', width: 'auto' }} />
+            <img src="https://files.catbox.moe/r7gvct.png" alt="AEM Logo" style={{ height: '130px', width: 'auto' }} />
             <Typography alignSelf={'flex-end'} color={'GrayText'} variant='body2'>- Shop Anything</Typography>
           </Stack>
         </Stack>

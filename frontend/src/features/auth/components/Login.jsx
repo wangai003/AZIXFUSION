@@ -173,10 +173,10 @@ export const Login = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5 }}
                 >
-                  <img 
-                    src="https://files.catbox.moe/4l70v0.png" 
-                    alt="AEM Logo" 
-                    style={{ height: '150px', width: 'auto' }} 
+                  <img
+                    src="https://files.catbox.moe/r7gvct.png"
+                    alt="AEM Logo"
+                    style={{ height: '150px', width: 'auto' }}
                   />
                 </motion.div>
                 

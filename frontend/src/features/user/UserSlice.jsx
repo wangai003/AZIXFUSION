@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import { fetchLoggedInUserById, updateUserById, becomeSeller, fetchSellerDashboard } from './UserApi'
+import { fetchLoggedInUserById, updateUserById, becomeSeller, fetchSellerDashboard, becomeExperienceHost, becomeExporter } from './UserApi'
 
 const initialState={
     status:"idle",
@@ -8,7 +8,9 @@ const initialState={
     successMessage:null,
     sellerOnboardingStatus: "idle",
     sellerDashboard: null,
-    sellerDashboardStatus: "idle"
+    sellerDashboardStatus: "idle",
+    hostOnboardingStatus: "idle",
+    exporterOnboardingStatus: "idle"
 }
 
 export const fetchLoggedInUserByIdAsync=createAsyncThunk('user/fetchLoggedInUserByIdAsync',async(id)=>{
@@ -28,6 +30,16 @@ export const becomeSellerAsync = createAsyncThunk('user/becomeSellerAsync', asyn
 export const fetchSellerDashboardAsync = createAsyncThunk('user/fetchSellerDashboardAsync', async () => {
     const dashboard = await fetchSellerDashboard();
     return dashboard;
+});
+
+export const becomeExperienceHostAsync = createAsyncThunk('user/becomeExperienceHostAsync', async (data) => {
+    const user = await becomeExperienceHost(data);
+    return user;
+});
+
+export const becomeExporterAsync = createAsyncThunk('user/becomeExporterAsync', async (data) => {
+    const user = await becomeExporter(data);
+    return user;
 });
 
 const userSlice=createSlice({
@@ -82,6 +94,30 @@ const userSlice=createSlice({
             .addCase(fetchSellerDashboardAsync.rejected, (state, action) => {
                 state.sellerDashboardStatus = 'rejected';
                 state.errors = action.error;
+            })
+
+            .addCase(becomeExperienceHostAsync.pending, (state) => {
+                state.hostOnboardingStatus = 'pending';
+            })
+            .addCase(becomeExperienceHostAsync.fulfilled, (state, action) => {
+                state.hostOnboardingStatus = 'fulfilled';
+                state.userInfo = action.payload;
+            })
+            .addCase(becomeExperienceHostAsync.rejected, (state, action) => {
+                state.hostOnboardingStatus = 'rejected';
+                state.errors = action.error;
+            })
+
+            .addCase(becomeExporterAsync.pending, (state) => {
+                state.exporterOnboardingStatus = 'pending';
+            })
+            .addCase(becomeExporterAsync.fulfilled, (state, action) => {
+                state.exporterOnboardingStatus = 'fulfilled';
+                state.userInfo = action.payload;
+            })
+            .addCase(becomeExporterAsync.rejected, (state, action) => {
+                state.exporterOnboardingStatus = 'rejected';
+                state.errors = action.error;
             });
     }
 })
@@ -94,5 +130,7 @@ export const selectUserSuccessMessage=(state)=>state.UserSlice.successMessage
 export const selectSellerOnboardingStatus = (state) => state.UserSlice.sellerOnboardingStatus;
 export const selectSellerDashboard = (state) => state.UserSlice.sellerDashboard;
 export const selectSellerDashboardStatus = (state) => state.UserSlice.sellerDashboardStatus;
+export const selectHostOnboardingStatus = (state) => state.UserSlice.hostOnboardingStatus;
+export const selectExporterOnboardingStatus = (state) => state.UserSlice.exporterOnboardingStatus;
 
 export default userSlice.reducer

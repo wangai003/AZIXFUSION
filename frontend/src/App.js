@@ -9,6 +9,16 @@ import { Protected } from './features/auth/components/Protected';
 import { useAuthCheck } from "./hooks/useAuth/useAuthCheck";
 import { useFetchLoggedInUserDetails } from "./hooks/useAuth/useFetchLoggedInUserDetails";
 import { AddProductPage, AdminOrdersPage, CartPage, CheckoutPage, ForgotPasswordPage, HomePage, LoginPage, OrderSuccessPage, OtpVerificationPage, ProductDetailsPage, ProductUpdatePage, ResetPasswordPage, SignupPage, UserOrdersPage, UserProfilePage, WishlistPage, MarketplaceList, BecomeSellerPage, SellerDashboardPage, BuyerDashboardPage, ServiceRequestPage, ServicesPage, GoodsMarketplace } from './pages';
+import LiveBiddingHub from './pages/LiveBiddingHub';
+import AuctionDetailPage from './pages/AuctionDetailPage';
+import AuctionCreatePage from './pages/AuctionCreatePage';
+import { BecomeExperienceHostPage } from './pages/BecomeExperienceHostPage';
+import ExperienceMarketplacePage from './pages/ExperienceMarketplacePage';
+import ExperienceCreatePage from './pages/ExperienceCreatePage';
+import HostDashboardPage from './pages/HostDashboardPage';
+import BecomeExportVendorPage from './pages/BecomeExportVendorPage';
+import ExporterDashboardPage from './pages/ExporterDashboardPage';
+import ExportMarketplacePage from './pages/ExportMarketplacePage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import ServiceDetails from './features/services/ServiceDetails';
@@ -24,6 +34,8 @@ function App() {
   console.log('App.js - user roles:', loggedInUser?.roles);
   console.log('App.js - sellerType:', loggedInUser?.sellerType);
   console.log('App.js - isAdmin:', loggedInUser?.isAdmin);
+  console.log('App.js - seller check result:', loggedInUser?.roles?.includes('seller'));
+  console.log('App.js - exporter check result:', loggedInUser?.roles?.includes('exporter'));
   console.log('App.js - should show admin routes:', loggedInUser?.isAdmin || (loggedInUser?.roles?.includes('seller') && loggedInUser?.sellerType === 'goods'));
 
   useAuthCheck();
@@ -72,7 +84,17 @@ function App() {
                 <Route path='/goods-marketplace' element={<Protected><GoodsMarketplace /></Protected>} />
                 <Route path='/services' element={<Protected><ServicesPage /></Protected>} />
                 <Route path='/services/:id' element={<Protected><ServiceDetails /></Protected>} />
+                <Route path='/auctions' element={<Protected><LiveBiddingHub /></Protected>} />
+                <Route path='/auctions/create' element={<Protected><AuctionCreatePage /></Protected>} />
+                <Route path='/auctions/:id' element={<Protected><AuctionDetailPage /></Protected>} />
+                <Route path='/experiences' element={<Protected><ExperienceMarketplacePage /></Protected>} />
+                <Route path='/experiences/create' element={<Protected><ExperienceCreatePage /></Protected>} />
                 <Route path='/become-seller' element={<Protected><BecomeSellerPage /></Protected>} />
+                <Route path='/become-experience-host' element={<Protected><BecomeExperienceHostPage /></Protected>} />
+                <Route path='/become-export-vendor' element={<Protected><BecomeExportVendorPage /></Protected>} />
+                <Route path='/export-marketplace' element={<Protected><ExportMarketplacePage /></Protected>} />
+                <Route path='/exporter/dashboard' element={<Protected><ExporterDashboardPage /></Protected>} />
+                <Route path='/host/dashboard' element={<Protected><HostDashboardPage /></Protected>} />
                 <Route path='/seller/dashboard' element={<Protected><SellerDashboardPage /></Protected>} />
                 <Route path='/buyer/dashboard' element={<Protected><BuyerDashboardPage /></Protected>} />
                 <Route path='/service-request' element={<Protected><ServiceRequestPage /></Protected>} />
