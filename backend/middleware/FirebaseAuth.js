@@ -24,6 +24,10 @@ const verifyFirebaseToken = async (req, res, next) => {
 
         // Check if user exists in our database
         let user = await User.findOne({ firebaseUid: decodedToken.uid });
+        if (!user) {
+            // Try to find by email as fallback
+            user = await User.findOne({ email: decodedToken.email });
+        }
 
         if (!user) {
             // Create new user if not exists using the FirebaseAdapter create method

@@ -216,24 +216,29 @@ exports.getByElement = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const productData = req.body;
-    
+
     // Set goods seller flags - accept any authenticated user creating a product
     if (req.user && req.user._id) {
       productData.isGoodsSellerProduct = true;
       productData.creatorId = req.user._id;
       productData.creatorName = req.user.name || req.user.username || 'Unknown';
       productData.creatorType = 'goods_seller';
-      
+
       console.log('🔍 Product controller - create - setting creatorId:', req.user._id);
       console.log('🔍 Product controller - create - setting isGoodsSellerProduct: true');
     }
-    
+
+    // Ensure country is set from request or user data
+    if (!productData.country && req.user && req.user.country) {
+      productData.country = req.user.country;
+    }
+
     console.log('🔍 Product controller - create - final productData:', JSON.stringify(productData, null, 2));
-    
+
     const product = await productModel.create(productData);
-    
+
     console.log('🔍 Product controller - create - created product:', JSON.stringify(product, null, 2));
-    
+
     res.status(201).json({
       success: true,
       data: product,

@@ -26,6 +26,7 @@ const auctionRoutes = require('./routes/Auction');
 const experienceRoutes = require('./routes/Experience');
 const exportProductRoutes = require('./routes/ExportProduct');
 const webSocketService = require('./services/WebSocketService');
+const { securityHeaders, sanitizeInput, paymentLogger } = require('./middleware/SecurityMiddleware');
 
 // server init
 const server=express()
@@ -34,6 +35,10 @@ const server=express()
 connectToDatabase().then(() => {
     // Start auction scheduler
     auctionScheduler.start();
+
+    // Security middleware
+    server.use(securityHeaders);
+    server.use(sanitizeInput);
 
     // middlewares
     const allowedOrigins = [
@@ -80,7 +85,7 @@ connectToDatabase().then(() => {
     server.use("/address", addressRoutes);
     server.use("/reviews", reviewRoutes);
     server.use("/wishlist", wishlistRoutes);
-    server.use("/payments", paymentRoutes);
+    server.use("/payments", paymentRoutes, paymentLogger); // Add payment logging
     server.use('/api',lipaNaMpesaRoutes)// Add payment routes
     server.use('/api/services', serviceRoutes);
     server.use('/api/messages', messageRoutes);

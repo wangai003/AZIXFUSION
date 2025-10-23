@@ -82,6 +82,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
 import { Navbar } from '../../navigation/components/Navbar';
 import { Footer } from '../../footer/Footer';
+import { GOODS_CATEGORIES, isGoodsCategory } from '../../../config/goodsCategories';
+import { selectCountry } from '../../currency/countrySlice';
 
 const ITEMS_PER_PAGE = 12;
 
@@ -134,7 +136,9 @@ export const GoodsMarketplace = () => {
 
   // Redux selectors with safety checks
   const brands = useSelector(selectBrands) || [];
-  const categories = useSelector(selectCategories) || [];
+  const allCategories = useSelector(selectCategories) || [];
+  // Filter categories to only show goods categories
+  const categories = allCategories.filter(category => isGoodsCategory(category.name));
   const products = useSelector(selectProducts);
   const totalResults = useSelector(selectProductTotalResults) || 0;
   
@@ -142,6 +146,7 @@ export const GoodsMarketplace = () => {
   const safeProducts = Array.isArray(products) ? products : [];
   
   const loggedInUser = useSelector(selectLoggedInUser);
+  const selectedCountry = useSelector(selectCountry);
   const productFetchStatus = useSelector(selectProductFetchStatus) || 'idle';
   const wishlistItems = useSelector(selectWishlistItems) || [];
   const wishlistItemAddStatus = useSelector(selectWishlistItemAddStatus) || 'idle';
@@ -319,7 +324,7 @@ export const GoodsMarketplace = () => {
     if (dispatch) {
       const finalFilters = { ...filters };
       finalFilters['pagination'] = { page: page, limit: ITEMS_PER_PAGE };
-      
+
       if (sort && sort !== 'Newest First') {
         const selectedSortOption = sortOptions.find(option => option.name === sort);
         if (selectedSortOption) {
@@ -334,9 +339,14 @@ export const GoodsMarketplace = () => {
       // Remove isGoodsSellerProduct filter - this should show all products, not just goods seller products
       // Remove user filter - this should show all goods seller products, not just the current user's
 
+      // Add country filter based on user's selected country
+      if (selectedCountry && selectedCountry !== 'Kenya') { // Default is Kenya, so only filter if different
+        finalFilters['country'] = selectedCountry;
+      }
+
       dispatch(fetchProductsAsync(finalFilters));
     }
-  }, [filters, page, sort, dispatch]);
+  }, [filters, page, sort, dispatch, selectedCountry]);
 
   // Reset page when total results change
   useEffect(() => {
@@ -350,7 +360,7 @@ export const GoodsMarketplace = () => {
     if (productActionStatus === 'fulfilled' && dispatch && loggedInUser) {
       const finalFilters = { ...filters };
       finalFilters['pagination'] = { page: page, limit: ITEMS_PER_PAGE };
-      
+
       if (sort && sort !== 'Newest First') {
         const selectedSortOption = sortOptions.find(option => option.name === sort);
         if (selectedSortOption) {
@@ -361,10 +371,15 @@ export const GoodsMarketplace = () => {
         }
       }
 
+      // Add country filter based on user's selected country
+      if (selectedCountry && selectedCountry !== 'Kenya') { // Default is Kenya, so only filter if different
+        finalFilters['country'] = selectedCountry;
+      }
+
       // Refresh the products list
       dispatch(fetchProductsAsync(finalFilters));
     }
-  }, [productActionStatus, dispatch, loggedInUser, filters, page, sort]);
+  }, [productActionStatus, dispatch, loggedInUser, filters, page, sort, selectedCountry]);
 
   // Manual search function - only triggers when user clicks search button
   const handleManualSearch = () => {
@@ -373,12 +388,12 @@ export const GoodsMarketplace = () => {
       setFilters(newFilters);
       setLocalSearchQuery(searchInput.trim()); // Set local search for real-time filtering
       setPage(1); // Reset to first page for new search
-      
+
       // Immediately fetch products with the new search filter
       if (dispatch) {
         const finalFilters = { ...newFilters };
         finalFilters['pagination'] = { page: 1, limit: ITEMS_PER_PAGE };
-        
+
         if (sort && sort !== 'Newest First') {
           const selectedSortOption = sortOptions.find(option => option.name === sort);
           if (selectedSortOption) {
@@ -387,6 +402,11 @@ export const GoodsMarketplace = () => {
               order: selectedSortOption.order
             };
           }
+        }
+
+        // Add country filter based on user's selected country
+        if (selectedCountry && selectedCountry !== 'Kenya') { // Default is Kenya, so only filter if different
+          finalFilters['country'] = selectedCountry;
         }
 
         dispatch(fetchProductsAsync(finalFilters));

@@ -339,6 +339,9 @@ export const theme = createTheme({
               borderColor: '#d4af37',
               boxShadow: '0 6px 16px rgba(212, 175, 55, 0.2)',
             },
+            '& .MuiOutlinedInput-input': {
+              color: '#333333',
+            },
           },
         },
       },

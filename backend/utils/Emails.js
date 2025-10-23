@@ -66,3 +66,73 @@ exports.sellerApplicationRejectedTemplate = (user, reason) => `
   </div>
   ${brandFooter}
 `;
+
+exports.sendOrderConfirmationEmail = async (userEmail, order) => {
+  const orderItems = order.item || [];
+  const totalAmount = order.total || 0;
+  const currency = order.selectedCurrency || 'AKOFA';
+
+  const itemsHtml = orderItems.map(item => `
+    <tr>
+      <td style="padding:8px;border-bottom:1px solid #eee;">${item.product?.name || 'Product'}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity || 1}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">${(item.product?.price || 0).toFixed(2)} ${currency}</td>
+    </tr>
+  `).join('');
+
+  const emailHtml = `
+    ${brandHeader}
+    <div style="padding:32px 24px;font-family:sans-serif;">
+      <h2 style="color:#388e3c;">Order Confirmed!</h2>
+      <p>Hi there,</p>
+      <p>Thank you for your order! Your payment has been successfully processed.</p>
+
+      <div style="background:#f9f9f9;padding:16px;margin:24px 0;border-radius:4px;">
+        <h3 style="margin:0 0 16px 0;color:#1976d2;">Order Details</h3>
+        <p><strong>Order ID:</strong> ${order._id}</p>
+        <p><strong>Payment Method:</strong> MoonPay (${currency})</p>
+        <p><strong>Transaction ID:</strong> ${order.moonpayTransactionId || 'N/A'}</p>
+        <p><strong>Order Date:</strong> ${new Date(order.createdAt || Date.now()).toLocaleDateString()}</p>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin:24px 0;">
+        <thead>
+          <tr style="background:#1976d2;color:#fff;">
+            <th style="padding:12px;text-align:left;border:1px solid #ddd;">Product</th>
+            <th style="padding:12px;text-align:center;border:1px solid #ddd;">Quantity</th>
+            <th style="padding:12px;text-align:right;border:1px solid #ddd;">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${itemsHtml}
+        </tbody>
+        <tfoot>
+          <tr style="background:#f5f5f5;font-weight:bold;">
+            <td colspan="2" style="padding:12px;text-align:right;border:1px solid #ddd;">Total:</td>
+            <td style="padding:12px;text-align:right;border:1px solid #ddd;">${totalAmount.toFixed(2)} ${currency}</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div style="background:#e8f5e8;padding:16px;margin:24px 0;border-radius:4px;border-left:4px solid #388e3c;">
+        <p style="margin:0;"><strong>What happens next?</strong></p>
+        <ul style="margin:8px 0 0 20px;padding:0;">
+          <li>You will receive shipping updates via email</li>
+          <li>Sellers will process your order within 1-2 business days</li>
+          <li>You can track your order in your account dashboard</li>
+        </ul>
+      </div>
+
+      <p>If you have any questions, please contact our support team.</p>
+      <p style="margin-top:32px;">Thank you for shopping with us!<br/>The MERN Marketplace Team</p>
+    </div>
+    ${brandFooter}
+  `;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL,
+    to: userEmail,
+    subject: `Order Confirmed - ${order._id}`,
+    html: emailHtml
+  });
+};

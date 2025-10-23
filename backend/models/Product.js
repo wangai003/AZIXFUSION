@@ -25,6 +25,7 @@ class Product {
         creatorId: productData.creatorId || null,
         creatorName: productData.creatorName || null,
         creatorType: productData.creatorType || null,
+        country: null,
         onSale: productData.onSale || false,
         salePrice: productData.salePrice || null,
         featured: productData.featured || false,
@@ -34,6 +35,20 @@ class Product {
         createdAt: new Date(),
         updatedAt: new Date()
       };
+
+      // Derive country from creator's country
+      if (product.creatorId) {
+        try {
+          const User = require('./User');
+          const userModel = new User();
+          const creator = await userModel.getById(product.creatorId);
+          if (creator && creator.country) {
+            product.country = creator.country;
+          }
+        } catch (error) {
+          console.warn('Could not fetch creator country for product:', error.message);
+        }
+      }
 
       return await this.adapter.create(product);
     } catch (error) {

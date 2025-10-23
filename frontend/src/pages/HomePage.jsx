@@ -31,11 +31,12 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectLoggedInUser } from '../features/auth/AuthSlice';
+import { selectCountry } from '../features/currency/countrySlice';
 import { ProductBanner } from '../features/products/components/ProductBanner';
-import { 
-  fetchFeaturedProductsAsync, 
-  selectFeaturedProducts, 
-  selectFeaturedProductsStatus 
+import {
+  fetchFeaturedProductsAsync,
+  selectFeaturedProducts,
+  selectFeaturedProductsStatus
 } from '../features/products/ProductSlice';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -92,7 +93,8 @@ export const HomePage = () => {
   const [currentHeroImage, setCurrentHeroImage] = useState(0);
   const [activeTab, setActiveTab] = useState('products');
   const loggedInUser = useSelector(selectLoggedInUser);
-  
+  const selectedCountry = useSelector(selectCountry);
+
   // Featured products from Redux
   const featuredProducts = useSelector(selectFeaturedProducts);
   const featuredProductsStatus = useSelector(selectFeaturedProductsStatus);
@@ -107,8 +109,13 @@ export const HomePage = () => {
 
   // Fetch featured products on component mount
   useEffect(() => {
-    dispatch(fetchFeaturedProductsAsync(8));
-  }, [dispatch]);
+    const filters = {};
+    // Add country filter based on user's selected country
+    if (selectedCountry && selectedCountry !== 'Kenya') { // Default is Kenya, so only filter if different
+      filters['country'] = selectedCountry;
+    }
+    dispatch(fetchFeaturedProductsAsync({ limit: 8, filters }));
+  }, [dispatch, selectedCountry]);
 
   const nextHeroImage = () => {
     setCurrentHeroImage((prev) => (prev + 1) % heroImages.length);

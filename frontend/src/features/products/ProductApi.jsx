@@ -49,6 +49,11 @@ export const fetchProducts=async(filters)=>{
         queryString+=`search=${filters.searchQuery}&`
     }
 
+    // Add country filter
+    if(filters.country){
+        queryString+=`country=${filters.country}&`
+    }
+
     // Add timestamp to bypass caching
     queryString+=`_t=${Date.now()}&`
 
@@ -162,9 +167,16 @@ export const deleteProduct = async (id) => {
 };
 
 // Fetch featured products with highest ratings
-export const fetchFeaturedProducts = async (limit = 8) => {
+export const fetchFeaturedProducts = async (limit = 8, filters = {}) => {
   try {
-    const res = await axiosi.get(`/products/featured?limit=${limit}`);
+    let queryString = `limit=${limit}`;
+
+    // Add country filter if provided
+    if (filters.country) {
+      queryString += `&country=${filters.country}`;
+    }
+
+    const res = await axiosi.get(`/products/featured?${queryString}`);
     return res.data;
   } catch (error) {
     console.error('Error fetching featured products:', error);

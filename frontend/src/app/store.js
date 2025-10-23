@@ -10,9 +10,11 @@ import ReviewSlice from '../features/review/ReviewSlice'
 import OrderSlice from '../features/order/OrderSlice'
 import WishlistSlice from '../features/wishlist/WishlistSlice'
 import currencyReducer from '../features/currency/currencySlice'
+import countryReducer from '../features/currency/countrySlice'
 import AdminReducer from '../features/admin/AdminSlice'
 import ServiceSlice from '../features/services/ServiceSlice';
 import auctionSlice from '../features/auctions/auctionSlice';
+import paymentReducer from '../features/payment/PaymentSlice';
 
 export const store=configureStore({
     reducer:{
@@ -28,7 +30,9 @@ export const store=configureStore({
         WishlistSlice,
         AdminSlice: AdminReducer,
         currency: currencyReducer,
+        country: countryReducer,
         ServiceSlice,
         auctions: auctionSlice,
+        payment: paymentReducer,
     }
 })

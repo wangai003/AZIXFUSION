@@ -61,8 +61,8 @@ export const deleteProductAsync = createAsyncThunk('products/deleteProductAsync'
 });
 
 // Fetch featured products with highest ratings
-export const fetchFeaturedProductsAsync = createAsyncThunk('products/fetchFeaturedProductsAsync', async (limit = 8) => {
-  return await fetchFeaturedProducts(limit);
+export const fetchFeaturedProductsAsync = createAsyncThunk('products/fetchFeaturedProductsAsync', async ({ limit = 8, filters = {} } = {}) => {
+  return await fetchFeaturedProducts(limit, filters);
 });
 
 const productSlice=createSlice({

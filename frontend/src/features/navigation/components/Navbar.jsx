@@ -42,6 +42,7 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import { selectProductIsFilterOpen, toggleFilters } from '../../products/ProductSlice';
 import CurrencySelector from '../../currency/CurrencySelector';
+import CountrySelector from '../../currency/CountrySelector';
 import { motion } from 'framer-motion';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import GavelIcon from '@mui/icons-material/Gavel';
@@ -188,6 +189,8 @@ export const Navbar = ({ isProductList = false }) => {
             )}
 
             <CurrencySelector />
+
+            <CountrySelector />
 
             {/* Cart Icon */}
             <Badge badgeContent={cartItems?.length || 0} color="secondary" sx={{ '& .MuiBadge-badge': { fontSize: '0.7rem' } }}>

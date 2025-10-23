@@ -168,6 +168,7 @@ exports.becomeSeller = async (req, res) => {
       sellerType: req.body.sellerType,
       roles: currentRoles,
       sellerVerificationStatus: 'pending', // New field for admin verification
+      country: req.body.country || user.country || 'Kenya',
       storeName: req.body.storeName || '',
       description: req.body.description || '',
       companyName: req.body.companyName || '',
@@ -318,6 +319,7 @@ exports.becomeExperienceHost = async (req, res) => {
       hostType: 'local_experience_host',
       roles: currentRoles,
       hostVerificationStatus: 'pending', // New field for admin verification
+      country: req.body.country || user.country || 'Kenya',
       hostProfile: {
         businessName: req.body.businessName || '',
         description: req.body.description || '',
@@ -423,6 +425,7 @@ exports.applyExporter = async (req, res) => {
       exporterType: 'african_export_vendor',
       roles: currentRoles,
       exporterVerificationStatus: 'pending', // New field for admin verification
+      country: req.body.country || user.country || 'Kenya',
       exporterProfile: {
         companyName: req.body.companyName || '',
         businessType: req.body.businessType || '',
